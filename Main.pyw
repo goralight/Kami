@@ -3,7 +3,7 @@ import os
 
 
 ###############################################################################
-# List of things to do! #
+# List of things to do!
 #
 # Make gui
 #   needs to have a menu when you fire it to allow options to be changed
