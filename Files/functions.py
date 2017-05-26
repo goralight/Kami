@@ -1,6 +1,7 @@
 from Tkinter import *
 # from tkinter.scrolledtext import ScrolledText <-- Not sure if need?
 import ttk
+import tkMessageBox
 import os
 # import Tkinter as tk
 # import time
@@ -41,6 +42,8 @@ def ConfigureOptions():
     # 3 = path to svn
     # 4 = path to local save
     # 5 = list of jira types
+    # 6 = reporters name
+    # 7 = setup
 
 # [0] # Enable timer tick box
 EnableTimerTickBox = ConfigureOptions()[0]
@@ -70,9 +73,18 @@ JiraList = ConfigureOptions()[5]
 JiraList = JiraList.split(", ")
 JiraList[0] = JiraList[0][12:]
 
+# [6] # Default value for the reporters name
+ReporterName = ConfigureOptions()[6]
+ReporterName = ReporterName[15:]
+
+# [7] # Default value for the setup
+SetupInfo = ConfigureOptions()[7]
+SetupInfo = SetupInfo[7:]
+
 
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
-                        LocalPath, JiraType, JiraNumber):
+                        LocalPath, JiraType, JiraNumber, ReportersName,
+                        SetupEntryInfo):
     """
     Grabs the options set by the user and assigns them to their respective
     parameter.
@@ -86,12 +98,18 @@ def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
     :param LocalPath: String, Inputted path for Local save copy, C:/...
     :param JiraType: String, Abbreviation of Jira type, EP= Eprais, etc...
     :param JiraNumber: String, Jira number entry, 426
+    :param ReportersName: String, name of the reporter for the current testing
+    :param SetupEntryInfo: String, current setup for the testing environment
 
     Example:
     [('selected',), '60', ('selected',), 'C:/Users/jfriend.SPIDEX/Desktop/SVN',
-    'C:/Users/jfriend.SPIDEX/Desktop/Kami/JiraLogs', 'EP', '426']
+    'C:/Users/jfriend.SPIDEX/Desktop/Kami/JiraLogs', 'EP', '426', 'JFriend',
+    'W10, S4B26, SQL2016, Chrome']
     """
 
+    # List of getters for pulling data of where their respective location is
+    # within the gui. TimerStatus checks the state of the timer checkbox and
+    # assigns it to the var and so on...
     TimerStatus = TimerStatus.state()
     TimerCount = TimerCount.get()
     SVNStatus = SVNStatus.state()
@@ -99,14 +117,39 @@ def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
     LocalPath = LocalPath.get()
     JiraType = JiraType.get()
     JiraNumber = JiraNumber.get()
+    ReportersName = ReportersName.get()
+    SetupEntryInfo = SetupEntryInfo.get()
 
+    # Once all assigned place in a list to work with.
     DataList = [TimerStatus, TimerCount, SVNStatus,
                 SVNPath, LocalPath, JiraType,
-                JiraNumber]
+                JiraNumber, ReportersName, SetupEntryInfo]
 
-    # print DataList <<< For debugging
+    # Debuggin on whats being brought over
+    # print DataList
     return DataList
 
 
+def ValidationError(ErrorMessage):
+    """
+    Simple error popup window which has the title Validation Error and
+    contains the error messages which is passed through as a parameter
+    :param ErrorMessage: String of the errror
+    :return: The popup window itself
+    """
+    tkMessageBox.showerror("Validation Error!", ErrorMessage)
+
+
+def ClearWindow(*args):
+    """
+    Cleans the window, should input as many frames as is needed
+    for just showing the root window. But this could also be used for
+    clearing out just one frame.
+    """
+    for each in args:
+        each.pack_forget()
+
+
+# Placeholder function
 def PrintMe():
     print "I am a placeholder!"

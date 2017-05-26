@@ -1,6 +1,6 @@
 from Tkinter import *
 from functions import *
-# from tkinter.scrolledtext import ScrolledText <-- Not sure if need?
+import ScrolledText
 import tkMessageBox
 import tkFileDialog
 import ttk
@@ -13,7 +13,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.2"
+KamiVersion = "0.3"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -88,7 +88,7 @@ class OptionsContent:
             else:
                 e.configure(state='disabled')
 
-    def __init__(self, bottomframe):
+    def __init__(self, bottomframe, topframe):
         """
         The meat of the option content.
         :param bottomframe: The OptionLabelFrame, the bottom one.
@@ -267,10 +267,7 @@ class OptionsContent:
                                              state="normal",
                                              command=AskLocalDir)
 
-        def ValidationError(ErrorMessage):
-            tkMessageBox.showerror("Validation Error!", ErrorMessage)
-
-        def ConfirmButtonFunctions():
+        def ConfirmButtonFunctions(*args):
             """
             This is used to make the confirm button run more than one function
             on clicking it. It also contains the validation of the data
@@ -282,8 +279,10 @@ class OptionsContent:
                                            OptionSaveSVN,
                                            CreateSVNEntry,
                                            CreateLocalPath,
-                                           JiraStr,
-                                           JiraNumberEntry)
+                                           JiraStr,  # DropDown Menu Selection
+                                           JiraNumberEntry,
+                                           ReporterNameEntry,
+                                           SetupEntry)
 
             # List of charas needed for a path to be a path
             PathValidation = ["\\", "/", ":"]
@@ -320,7 +319,7 @@ class OptionsContent:
                 return
 
             # Validation for checking to see if the SVN path given is valid
-            # givin that the tick box for save to SVN to ticked
+            # given that the tick box for save to SVN to ticked
             if not any(x in DataList[3] for x in PathValidation) and "selected" in DataList[2]:
                 Error = "Not a valid path! Please change the SVN path!"
                 ValidationError(Error)
@@ -359,9 +358,32 @@ class OptionsContent:
                 print Error
                 return
 
-            PrintMe()  # Run MAKEME function or something
-            # This is were a fucntion would confirm everything and
-            # spawn in the new frames
+            # Validation for making sure the reporters name isnt empty
+            if DataList[7] == "":
+                Error = "Reporters name can't be empty! Fill in your name!"
+                ValidationError(Error)
+                print Error
+                return
+
+            # Validation for making sure the setup cant be empty
+            if DataList[8] == "":
+                Error = "Setup can't be empty! Fill in your setup!"
+                ValidationError(Error)
+                print Error
+                return
+
+            # Cleans the root window of the 2 frames being used. It will then
+            # redraw everything else which is needed for the next part and will
+            # make use of the options entered
+            ClearWindow(bottomframe, topframe)
+            scrolledtext = ttk.Scrolledtext(root)
+            scrolledtext.pack()
+            print DataList
+            # Removes the function linked to enter, see below
+            root.unbind("<Return>")
+
+        # Makes it so you can hit enter instead of clicking confirm
+        root.bind("<Return>", ConfirmButtonFunctions)
 
         # Defines the confirm button, makes use of the ConfirmButtonFunctions()
         ConfirmButton = ttk.Button(bottomframe,
@@ -392,20 +414,50 @@ class OptionsContent:
         JiraNumberEntry.grid(row=5, column=3,
                              sticky=E, padx=(0, 7))
 
+        # Defines the reporter name label
+        ReporterNameLabel = ttk.Label(bottomframe,
+                                      text="Reporters name")
+
+        # Defines the Report name Entry
+        ReporterNameEntry = ttk.Entry(bottomframe, width=27)
+        ReporterNameEntry.insert(END, ReporterName)  # Placeholder via config
+
+        # Draws the reporter name Label
+        ReporterNameLabel.grid(row=6, sticky=W, padx=(5, 0), pady=(0, 5))
+
+        # Defines the setup label
+        SetupLabel = ttk.Label(bottomframe,
+                               text="Setup")
+
+        # Defines the setup Entry and places
+        SetupEntry = ttk.Entry(bottomframe, width=27)
+        SetupEntry.insert(END, SetupInfo)  # Placeholder text defined by config
+
+        # Draws the entry for the reporter name
+        ReporterNameEntry.grid(row=6, column=3,
+                               sticky=E, padx=(0, 7))
+
+        # Draws the setup label text
+        SetupLabel.grid(row=7, sticky=W, padx=(5, 0), pady=(0, 5))
+
+        # Draws the Setup Entry
+        SetupEntry.grid(row=7, column=3,
+                        sticky=E, padx=(0, 7))
+
         # Draws the Quit button
-        QuitButton.grid(row=6, column=0,
+        QuitButton.grid(row=8, column=0,
                         sticky=W, padx=(5, 0),
                         pady=(0, 5))
 
         # Draws the Confirm button
-        ConfirmButton.grid(row=6, column=3,
+        ConfirmButton.grid(row=8, column=3,
                            sticky=W+E, padx=(0, 5),
                            pady=(0, 5))
 
         # TODO: Need to refactor the shit out of this
-        # This is messy af and you need to move the lines around and make it
+        # This is messy af - you need to move the lines around and make it
         # easier to read and follow, instead of it looking hacky as php code
 
 MainMenu = MainMenuFrames(root)
 Title = TitleLabel(MainMenu.TitleFrame)
-Options = OptionsContent(MainMenu.OptionsLabelFrame)
+Options = OptionsContent(MainMenu.OptionsLabelFrame, MainMenu.TitleFrame)
