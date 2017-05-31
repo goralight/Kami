@@ -15,11 +15,11 @@ import os
 #   un sizable (static)
 #
 # Able to edit entries after being submitted
-# Timer - length can be edited in the options file and when firing up
-# Pause timer
-# Alarm when you are a minute (can be edited) away from the timer
-#                             (% of the time left? like 20% of time left?)
 #
+# Pause timer use below:
+# https://stackoverflow.com/questions/36777643/how-to-stop-a-timer-python
+# Have a opectiy slider when on the bug entry window use below:
+# root.attributes('-alpha', 0.3)
 ###############################################################################
 
 # Settings for the root window (lock the resize, default size etc...

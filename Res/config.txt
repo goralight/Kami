@@ -4,3 +4,5 @@ enable_save_svn: 1
 default_svn_path: C:/Users/jfriend.SPIDEX/Desktop/SVN
 default_local_save_path: C:/Users/jfriend.SPIDEX/Desktop/Kami/JiraLogs
 jira_types: EP, WM, DS
+reporter_name: JFriend
+Setup: W10, S#B#, SQL2016, Chrome

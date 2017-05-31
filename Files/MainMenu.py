@@ -1,4 +1,5 @@
 from Tkinter import *
+from tkinter import font
 from functions import *
 import ScrolledText
 import tkMessageBox
@@ -13,7 +14,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.3"
+KamiVersion = "0.3.5"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -52,13 +53,13 @@ class TitleLabel:
         """
         MainTitle = ttk.Label(topframe,
                               text="Kami",
-                              font=("Arial", 24))
+                              font=("Verdana", 24))
         SubTitle = ttk.Label(topframe,
                              text="QA Note Taker",
-                             font="Arial")
+                             font="Verdana")
         VersionNumber = ttk.Label(topframe,
                                   text=KamiVersion,
-                                  font=("Arial", 8))
+                                  font=("Verdana", 8))
         MainTitle.pack()
         SubTitle.pack()
         VersionNumber.pack()
@@ -274,29 +275,29 @@ class OptionsContent:
             inputted from the user. Once the validation is sound it will then
             fire off the fucntion to go to the actal logging part of Kami
             """
-            DataList = ConfirmButtonReturn(OptionTimer,
-                                           TimerEntry,
-                                           OptionSaveSVN,
-                                           CreateSVNEntry,
-                                           CreateLocalPath,
-                                           JiraStr,  # DropDown Menu Selection
-                                           JiraNumberEntry,
-                                           ReporterNameEntry,
-                                           SetupEntry)
+            ConfigList = ConfirmButtonReturn(OptionTimer,
+                                             TimerEntry,
+                                             OptionSaveSVN,
+                                             CreateSVNEntry,
+                                             CreateLocalPath,
+                                             JiraStr,  # DropDown Menu
+                                             JiraNumberEntry,
+                                             ReporterNameEntry,
+                                             SetupEntry)
 
             # List of charas needed for a path to be a path
             PathValidation = ["\\", "/", ":"]
 
             # If timer is empty string, itll just switch it over to 0
-            if DataList[1] == "":
+            if ConfigList[1] == "":
                 try:
-                    DataList[1] = int(DataList[1])
+                    ConfigList[1] = int(ConfigList[1])
                 except ValueError:
-                    DataList[1] = 0
+                    ConfigList[1] = 0
 
             # If timer cant be converted to int, throw error
             try:
-                DataList[1] = int(DataList[1])
+                ConfigList[1] = int(ConfigList[1])
             except ValueError:
                 Error = "Only numbers allowed when setting a timer!"
                 ValidationError(Error)
@@ -305,14 +306,14 @@ class OptionsContent:
 
             # Validation for making timer be more than 10mins only if the tick
             # box for wanting a timer is enabled
-            if DataList[1] < 10 and "selected" in DataList[0]:
+            if ConfigList[1] < 10 and "selected" in ConfigList[0]:
                 Error = "Timer must be set higher than 10 minutes!"
                 ValidationError(Error)
                 print Error
                 return
 
             # Validation for saving to SVN enabled but no path given
-            if "selected" in DataList[2] and DataList[3] == "":
+            if "selected" in ConfigList[2] and ConfigList[3] == "":
                 Error = "Can't have save to SVN enabled and empty path!"
                 ValidationError(Error)
                 print Error
@@ -320,14 +321,14 @@ class OptionsContent:
 
             # Validation for checking to see if the SVN path given is valid
             # given that the tick box for save to SVN to ticked
-            if not any(x in DataList[3] for x in PathValidation) and "selected" in DataList[2]:
+            if not any(x in ConfigList[3] for x in PathValidation) and "selected" in ConfigList[2]:
                 Error = "Not a valid path! Please change the SVN path!"
                 ValidationError(Error)
                 print Error
                 return
 
             # Validation to check the local save path is empty (must never be)
-            if DataList[4] == "":
+            if ConfigList[4] == "":
                 Error = "Local save path can't be empty!"
                 ValidationError(Error)
                 print Error
@@ -335,7 +336,7 @@ class OptionsContent:
 
             # Validation for making sure the SVN path is valid. It compares the
             # list of charas needed for a path with the given path
-            if not any(x in DataList[4] for x in PathValidation):
+            if not any(x in ConfigList[4] for x in PathValidation):
                 Error = "Not a valid path! Please change the local save path!"
                 ValidationError(Error)
                 print Error
@@ -343,7 +344,7 @@ class OptionsContent:
 
             # Validation for making sure the Jira entry isnt empty as it is a
             # requirement to link the Jira log to the work youre testing
-            if DataList[6] == "":
+            if ConfigList[6] == "":
                 Error = "The JIRA number log can't be empty!"
                 ValidationError(Error)
                 print Error
@@ -351,7 +352,7 @@ class OptionsContent:
 
             # If Jira entry cant be converted to a int, throw error.
             try:
-                DataList[6] = int(DataList[6])
+                ConfigList[6] = int(ConfigList[6])
             except ValueError:
                 Error = "Only numbers allowed for JIRA log number!"
                 ValidationError(Error)
@@ -359,14 +360,14 @@ class OptionsContent:
                 return
 
             # Validation for making sure the reporters name isnt empty
-            if DataList[7] == "":
+            if ConfigList[7] == "":
                 Error = "Reporters name can't be empty! Fill in your name!"
                 ValidationError(Error)
                 print Error
                 return
 
             # Validation for making sure the setup cant be empty
-            if DataList[8] == "":
+            if ConfigList[8] == "":
                 Error = "Setup can't be empty! Fill in your setup!"
                 ValidationError(Error)
                 print Error
@@ -376,11 +377,23 @@ class OptionsContent:
             # redraw everything else which is needed for the next part and will
             # make use of the options entered
             ClearWindow(bottomframe, topframe)
-            scrolledtext = ttk.Scrolledtext(root)
-            scrolledtext.pack()
-            print DataList
+            # scrolledtext = ScrolledText.ScrolledText(root, height=3, width=40)
+            # scrolledtext.pack()
+            print ConfigList
             # Removes the function linked to enter, see below
             root.unbind("<Return>")
+            root.title("Kami - " + JiraStr.get() + JiraNumberEntry.get())
+            CountDown = CountDownTimer(OptionTimer, TimerEntry, root)
+
+            ################ PlaceHolder #################
+            Pre1 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
+            Pre2 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
+            Pre3 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
+            Pre1.pack()
+            Pre2.pack()
+            Pre3.pack()
+            LogEntry = ttk.Entry(root, width=90, font=font.Font(family="Verdana", size=12))
+            LogEntry.pack()
 
         # Makes it so you can hit enter instead of clicking confirm
         root.bind("<Return>", ConfirmButtonFunctions)
@@ -461,3 +474,11 @@ class OptionsContent:
 MainMenu = MainMenuFrames(root)
 Title = TitleLabel(MainMenu.TitleFrame)
 Options = OptionsContent(MainMenu.OptionsLabelFrame, MainMenu.TitleFrame)
+
+
+def Die():
+    print "Save the changes and do what you need to do to save the data."
+    print "Will need checks to see if there is data to even save and whatnot"
+    root.destroy()  # Same as using the W10 kill protocol
+
+root.protocol("WM_DELETE_WINDOW", Die)
