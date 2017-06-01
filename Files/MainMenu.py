@@ -1,6 +1,8 @@
+# coding=utf-8
 from Tkinter import *
 from tkinter import font
 from functions import *
+from Input import *
 import ScrolledText
 import tkMessageBox
 import tkFileDialog
@@ -14,7 +16,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.3.5"
+KamiVersion = "0.4.0"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -96,6 +98,7 @@ class OptionsContent:
         """
 
         # Please please change the below two fucntions as its bad...
+        # Although dont think its possible :/
         def AskSVNDir():
             """
             This makes use of the tkFileDialog.askdirectory() function from
@@ -373,27 +376,30 @@ class OptionsContent:
                 print Error
                 return
 
-            # Cleans the root window of the 2 frames being used. It will then
-            # redraw everything else which is needed for the next part and will
-            # make use of the options entered
+            # Cleans the root window of the 2 frames being used.
             ClearWindow(bottomframe, topframe)
             # scrolledtext = ScrolledText.ScrolledText(root, height=3, width=40)
             # scrolledtext.pack()
-            print ConfigList
+            # print ConfigList  # Debugging
+
             # Removes the function linked to enter, see below
             root.unbind("<Return>")
-            root.title("Kami - " + JiraStr.get() + JiraNumberEntry.get())
-            CountDown = CountDownTimer(OptionTimer, TimerEntry, root)
+            # Changes title to the JIRA number
+            InputTitle = JiraStr.get() + "-" + JiraNumberEntry.get()
+            root.title("Kami    " + InputTitle)
 
-            ################ PlaceHolder #################
-            Pre1 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
-            Pre2 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
-            Pre3 = ttk.Label(root, text="Previous Enty after hitting enter...", font="Verdana 10")
-            Pre1.pack()
-            Pre2.pack()
-            Pre3.pack()
-            LogEntry = ttk.Entry(root, width=90, font=font.Font(family="Verdana", size=12))
-            LogEntry.pack()
+            # Creates frame for writing stuff
+            WritingFrame = ttk.Frame(root)
+            ColorFrame = Frame(root, height=15, highlightbackground="#474747", highlightthickness=1)
+
+            ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
+            WritingFrame.pack(padx=(5, 5), pady=(5, 5))
+
+            CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
+            TypeOfLog(WritingFrame, root, ColorFrame)
+            EntryItemClass(WritingFrame)
+            SmallHistory(WritingFrame)
+            SeeThroughSlider(WritingFrame, root)
 
         # Makes it so you can hit enter instead of clicking confirm
         root.bind("<Return>", ConfirmButtonFunctions)
@@ -476,9 +482,4 @@ Title = TitleLabel(MainMenu.TitleFrame)
 Options = OptionsContent(MainMenu.OptionsLabelFrame, MainMenu.TitleFrame)
 
 
-def Die():
-    print "Save the changes and do what you need to do to save the data."
-    print "Will need checks to see if there is data to even save and whatnot"
-    root.destroy()  # Same as using the W10 kill protocol
-
-root.protocol("WM_DELETE_WINDOW", Die)
+root.protocol("WM_DELETE_WINDOW", lambda: Die(root))

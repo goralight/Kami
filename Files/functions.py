@@ -8,27 +8,6 @@ import datetime
 import winsound
 import threading
 
-
-# import Tkinter as tk
-# import time
-# from datetime import datetime
-# #
-# #
-# class App():
-#     def __init__(self):
-#         self.root = tk.Tk()
-#         self.label = tk.Label(text="")
-#         self.label.pack()
-#         self.update_clock()
-#         self.root.mainloop()
-#
-#     def update_clock(self):
-#         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-#         self.label.configure(text=now)
-#         self.root.after(1000, self.update_clock)
-#
-# app=App()
-
 FirstCWD = os.path.dirname(os.path.realpath(__file__))
 ResDir = FirstCWD[:-5]+"\Res"
 
@@ -154,59 +133,16 @@ def ClearWindow(*args):
         each.pack_forget()
 
 
-class CountDownTimer:
-    def __init__(self, TimerStatus, TimerCount, frame):
-        """
-        Inits the CountDownTimer - This is used to tell the user how long is
-        left on the countdown timer. Grabs the inputted time from the user in
-        the timer entry
-        :param TimerStatus: Grabbed from OptionTimer - see if the tick box is
-                            selected or not. If it isnt the timer isnt drawn
-                            but the logic is set in place still
-        :param TimerCount:  Grabbed from TimerEntry and is the time in minutes
-                            set by the user. It is * by 60 to turn the entry
-                            from seconds to minutes so that it can be worked
-                            with correctly. If the TimerCount < 20% of
-                            remaining time it will bleep and turn font red
-        :param frame:       Which frame the timer is drawn on
-        """
-        # TimerAlarm = datetime.timedelta(minutes=TimerAlarm)
-        self.TimerCount = TimerCount
-        self.TimerStatus = TimerStatus
-        self.frame = frame
-
-        self.TimerStatus = TimerStatus.state()
-        self.TimerCount = TimerCount.get()
-        self.TimerCount = int(self.TimerCount) * 60  # Make it into seconds. 60*60=3600seconds=1hour
-        self.TimerAlarm = 0.9 * self.TimerCount  # change 0.9 to 0.2 for final
-        self.TimerAlarm = datetime.timedelta(seconds=self.TimerAlarm)
-        self.TimerCount = datetime.timedelta(seconds=self.TimerCount)
-        self.TimerCountLabel = ttk.Label(frame, text=self.TimerCount, font="Verdana")
-        if "selected" in self.TimerStatus:  # Only draws timer if state is true
-            self.TimerCountLabel.pack()
-        else:
-            return
-        self.frame.after(1000, self.Update)
-
-    @staticmethod
-    def BleepSound():
-        for x in range(0, 3):
-            winsound.Beep(3278, 500)
-
-    def Update(self):
-        self.TimerCount = self.TimerCount - datetime.timedelta(seconds=1)
-        self.TimerCountLabel.configure(text=self.TimerCount)
-        if self.TimerCount == self.TimerAlarm:
-            # New thread so that text isnt lost if typing when bleeping
-            threading.Thread(target=self.BleepSound()) # Bleeps if < 20% remaining time
-            self.TimerCountLabel.configure(foreground="red")
-        if str(self.TimerCount) == "0:00:00":
-            self.TimerCount = datetime.timedelta(seconds=0)
-            self.TimerCountLabel.configure(text=self.TimerCount, font="Verdana 12 bold")
-            threading.Thread(target=self.BleepSound())  # Bleeps if timer == 0:00:00
-            self.TimerCountLabel.configure(foreground="red")
-            return
-        self.frame.after(1000, self.Update)  # Every 1s, configure & redraw
+def Die(MainLoop):
+    """
+    Simple function to perform other processes before actually killing the
+    script. Here could add saving / other close down features before it is
+    killed from the user
+    :param MainLoop: The Root frame to kill.
+    """
+    # Placeholder
+    print "It closed and I printed before I died... YAY!"
+    MainLoop.destroy()  # Same as using the W10 kill protocol
 
 
 # Placeholder function
