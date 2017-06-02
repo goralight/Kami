@@ -1,10 +1,10 @@
 # coding=utf-8
-from Tkinter import *
-from tkinter import font
+# from Tkinter import *
+# import tkFont
 from functions import *
 from Input import *
-import ScrolledText
-import tkMessageBox
+# import ScrolledText
+# import tkMessageBox
 import tkFileDialog
 import ttk
 
@@ -37,13 +37,13 @@ class MainMenuFrames:
         # Need self if you want to call the attribute later on, see
         # Title = TitleLabel(MainMenu.TitleFrame)
         self.TitleFrame = ttk.Frame(master)
-        self.OptionsLabelFrame = ttk.LabelFrame(master, text="Options")
+        self.OptionsLabelFrame = Frame(master)
 
         self.TitleFrame.pack(side=TOP,
                              fill="both",
                              expand=True)
-        self.OptionsLabelFrame.pack(padx=OptionFramePadding,
-                                    pady=OptionFramePadding)
+        self.OptionsLabelFrame.pack(padx=12,
+                                    pady=(24, 12))
 
 
 class TitleLabel:
@@ -161,7 +161,7 @@ class OptionsContent:
             OptionTimer.invoke()  # Makes it ticked on start up
 
         # Puts the optiontimer tick box inline
-        OptionTimer.grid(sticky=W)
+        OptionTimer.grid(padx=(5, 5), sticky=W)
 
         # Define the timer input label which is left of the entry itself
         TimerInputLabel = Label(bottomframe,
@@ -237,7 +237,7 @@ class OptionsContent:
             SVNBrowseButton.configure(state="disabled")
 
         # Draws the tick box for save to svn
-        OptionSaveSVN.grid(row=1, sticky=W)
+        OptionSaveSVN.grid(padx=(5, 5), row=1, sticky=W)
 
         # Draws the SVN browse for dir button
         SVNBrowseButton.grid(row=2, column=3,
@@ -390,14 +390,14 @@ class OptionsContent:
 
             # Creates frame for writing stuff
             WritingFrame = ttk.Frame(root)
-            ColorFrame = Frame(root, height=15, highlightbackground="#474747", highlightthickness=1)
+            ColorFrame = Frame(root, height=15, highlightbackground="#474747",
+                               highlightthickness=1)
 
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
-
-            CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
-            TypeOfLog(WritingFrame, root, ColorFrame)
-            EntryItemClass(WritingFrame)
+            CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
+            TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
+            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel, CountDownTimerVar.TimerCountLabel)
             SmallHistory(WritingFrame)
             SeeThroughSlider(WritingFrame, root)
 

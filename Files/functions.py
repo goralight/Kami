@@ -1,12 +1,12 @@
-from Tkinter import *
+# from Tkinter import *
 # from tkinter.scrolledtext import ScrolledText <-- Not sure if need?
-import ttk
+# import ttk
 import tkMessageBox
 import os
-import time
-import datetime
-import winsound
-import threading
+# import time
+# import datetime
+# import winsound
+# import threading
 
 FirstCWD = os.path.dirname(os.path.realpath(__file__))
 ResDir = FirstCWD[:-5]+"\Res"
@@ -29,6 +29,8 @@ def ConfigureOptions():
     # 5 = list of jira types
     # 6 = reporters name
     # 7 = setup
+    # 8 = log types
+    # 9 = log type colors
 
 # [0] # Enable timer tick box
 EnableTimerTickBox = ConfigureOptions()[0]
@@ -65,6 +67,16 @@ ReporterName = ReporterName[15:]
 # [7] # Default value for the setup
 SetupInfo = ConfigureOptions()[7]
 SetupInfo = SetupInfo[7:]
+
+# [8] # Log Type value list
+Logtype = ConfigureOptions()[8]
+Logtype = Logtype.split(", ")
+Logtype[0] = Logtype[0][10:]
+
+# [9] # Log Type background color linked to log type
+LogTypeColor = ConfigureOptions()[9]
+LogTypeColor = LogTypeColor.split(", ")
+LogTypeColor[0] = LogTypeColor[0][19:]
 
 
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,

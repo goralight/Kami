@@ -1,7 +1,5 @@
 # coding=utf-8
 from Files import MainMenu
-import os
-
 
 ###############################################################################
 # List of things to do!

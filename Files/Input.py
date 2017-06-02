@@ -1,36 +1,72 @@
 from Tkinter import *
-from tkinter import font
 import tkFont
-import ScrolledText
-import tkMessageBox
-import tkFileDialog
+# import ScrolledText
+# import tkMessageBox
+# import tkFileDialog
 import ttk
-import os
-import time
+# import os
+# import time
 import datetime
 import winsound
 import threading
 
 
 class EntryItemClass:
-    def __init__(self, frame):
+    def __init__(self, frame, root, WhichType, TimerCount):
+        """
+        This is the input from the user when they are actually inputting notes.
+        Hitting the enter key causes the SaveInput function to be run.
+        :param frame: Which frame within the root window - WritingFrame
+        :param root: The mainloop window - root
+        :param WhichType: The note type being taken - Note, Test, Bug, etc.
+        :param TimerCount: The current timer in place - 00:04:26 for example
+        """
         self.frame = frame
+        self.root = root
+        self.WhichType = WhichType
+        self.TimerCount = TimerCount
 
+        self.root.bind("<KeyRelease-Return>", self.SaveInput)
         self.LogEntry = ttk.Entry(self.frame, width=90,
-                                  font=font.Font(family="Verdana", size=12))
+                                  font=tkFont.Font(family="Verdana", size=12))
         self.LogEntry.grid(column=0, row=1, columnspan=3, pady=(5, 5))
+
+    def SaveInput(self, *args):
+        """
+        Grabs all of the required data and then puts them in a list (entryInput)
+        It stores The inputted text, the note type, current timer count and the
+        current time
+        :return: EntryInput List
+        """
+        EntryInput = [self.LogEntry.get(), self.WhichType.cget("text"),
+                      self.TimerCount.cget("text"), datetime.datetime.now().strftime("%H:%M:%S")]
+        if EntryInput[0] != "":  # If no input do nothing
+            print EntryInput
+            self.LogEntry.delete(0, 'end')
 
 
 class SeeThroughSlider:
     def __init__(self, frame, root):
+        """
+        This allows the user to set the opacity of the window, from 100% to 50%
+        :param frame: Which frame within the root window - WritingFrame
+        :param root: The main root window - root
+        """
         self.frame = frame
         self.root = root
 
+        # Must be in float as it only works out from 0.0 - 1.0
         self.SliderEntry = ttk.Scale(self.frame, from_=0.5, to=1, command=self.SetSeeThrough)
-        self.SliderEntry.set(100)
+        self.SliderEntry.set(1)
         self.SliderEntry.grid(column=0, row=2, sticky=W)
 
     def SetSeeThrough(self, *args):
+        """
+        When the slider is moved, this is called - each time.
+        The slider edits the alpha (opacity) of the root window from the value
+        set above
+        :return: self.root.wm_attributes('-alpha', ScaleEntryValue)
+        """
         ScaleEntryValue = round(self.SliderEntry.get(), 2)
         self.root.wm_attributes('-alpha', ScaleEntryValue)
         # print ScaleEntryValue
@@ -38,10 +74,15 @@ class SeeThroughSlider:
 
 class SmallHistory:
     def __init__(self, frame):
+        """
+        Displays the last 3 entry history of writen notes. The history can be
+        toggled via the see history label
+        :param frame: The frame in which this sits in - Writing Frame
+        """
         self.frame = frame
         self.HistoryCount = 1
 
-        self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#3D8CDF")
+        self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#8764B8")
         if self.HistoryCount != 0:
             self.SeeMoreLabel.grid(column=0, row=2, columnspan=3)
         self.SeeMoreLabel.bind("<Button-1>", self.ShowHistory)
@@ -50,6 +91,7 @@ class SmallHistory:
         u.configure(underline=True)
         self.SeeMoreLabel.configure(font=u)
 
+    # This is where the actual science needs to happen ;)
     def ShowHistory(self, event):
         # Read the newly created bug log, find the last 3 by getting Historycount
         # adding that to the total lines found(?) and printing the last three, and then
@@ -58,14 +100,26 @@ class SmallHistory:
 
 
 class TypeOfLog:
-    def __init__(self, frame, root, colorframe):
+    def __init__(self, frame, root, colorframe, WhichType, WhichTypeBGColor):
+        """
+        This shows the user what note type they are currently writing in. It
+        will also change the color of the color frame depending on what the
+        note type is. The note type and colors are defined within the config.txt
+        file.
+
+        Allows the use of the up and down arrows, or just left/right clicking on
+        the label will change the state
+        :param frame: The frame in which this sits in - WritingFrame
+        :param root: The root window - root
+        :param colorframe: The frame which changes color - ColorFrame
+        :param WhichType: The note type list which is being used - defined within config
+        :param WhichTypeBGColor: The frame color list which is being used - defined in config
+        """
         self.frame = frame
         self.root = root
         self.colorframe = colorframe
-
-        self.WhichType = ["Note", "Bug", "Test", "Question", "Check", "Next Time"]
-        # My Purple, red, green, yellow, blue, grey
-        self.WhichTypeBGColor = ["#8150E2", "#C81616", "#14A019", "#f6f628", "#3D8CDF", "#474747"]
+        self.WhichType = WhichType
+        self.WhichTypeBGColor = WhichTypeBGColor
         self.Index = 0
 
         self.root.bind("<KeyRelease-Up>", self.UpSelectionLogType)
@@ -79,7 +133,13 @@ class TypeOfLog:
         self.LoggingTypeLabel.bind("<ButtonRelease-1>", self.UpSelectionLogType)
         self.LoggingTypeLabel.bind("<ButtonRelease-3>", self.DownSelectionLogType)
 
+    # Should probs join these two functions into one a pass through a parameter(?)
     def UpSelectionLogType(self, event):
+        """
+        This cycles through the list of note types and colors. Adding 1 to the
+        index each time up arrow or left click. If the end of the index is reached,
+        it will loop back through the beginning again. 5 > 6 > 0 > 1 > etc...
+        """
         if self.Index < len(self.WhichType)-1:
             self.Index += 1
             self.LoggingTypeLabel.configure(text=self.WhichType[self.Index])
@@ -90,6 +150,11 @@ class TypeOfLog:
             self.colorframe.configure(background=self.WhichTypeBGColor[self.Index])
 
     def DownSelectionLogType(self, event):
+        """
+        This cycles through the lost of note types and colors. Subtracting 1 to
+        the index each time down arrow or right click. if the end of the index is
+        reached it will loop back through the beginning again. 2 > 1 > 0 > 6 > etc...
+        """
         if self.Index > 0:
             self.Index -= 1
             self.LoggingTypeLabel.configure(text=self.WhichType[self.Index])
@@ -137,12 +202,24 @@ class CountDownTimer:
         self.frame.after(1000, self.Update)
 
     @staticmethod
-    def BleepSound():
+    def BleepSound():  # Replace this with a wav file ... Doesnt work on new machines
         for x in range(0, 3):
             winsound.Beep(3278, 500)
 
     def Update(self):
-        if self.TimerState == 1:
+        """
+        This handles the updating of the label when the timer hsa ticked over
+        one second. It also handles the pausing and starting of the timer via the
+        Timerstate
+
+        Along with that, it manages the 20% left alarm. It will bleep to the user
+        to hint that they have only 20% of the time left and it will change the
+        text red. When the timer is 00:00:00 it will remain there and be bold red
+
+        Makes use of multi threading so that if bleeping is happening the user
+        doesnt lose the ability to keep on typing
+        """
+        if self.TimerState == 1:  # If the timer is on 00:00 and you unpause it carries on
             self.TimerCount = self.TimerCount - datetime.timedelta(seconds=1)
             self.TimerCountLabel.configure(text=self.TimerCount)
             if self.TimerCount == self.TimerAlarm:
@@ -158,9 +235,14 @@ class CountDownTimer:
         else:
             return
         self.frame.after(1000, self.Update)  # Every 1s, configure & redraw
-        # print self.TimerCount
+        # print self.TimerCountLabel.cget("text")
 
     def ChangeTimerState(self, *args):
+        """
+        This handles the timer appearance if the timer state (pause or ticking)
+        has changed. Purple for paused, black for ticking and red if ticking
+        but below the 20% mark
+        """
         if self.TimerState == 1:
             self.TimerState = 0
             self.TimerCountLabel.configure(foreground="#8150E2")
@@ -172,4 +254,4 @@ class CountDownTimer:
                 self.TimerCountLabel.configure(foreground="black")
             self.Update()
         else:
-            "The Clocks broken!"
+            "The Clocks broken!"  # Not needed but nice to have

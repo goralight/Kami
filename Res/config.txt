@@ -5,4 +5,6 @@ default_svn_path: C:/Users/jfriend.SPIDEX/Desktop/SVN
 default_local_save_path: C:/Users/jfriend.SPIDEX/Desktop/Kami/JiraLogs
 jira_types: EP, WM, DS
 reporter_name: JFriend
-Setup: W10, S#B#, SQL2016, Chrome
+setup: W10, S#B#, SQL2016, Chrome
+log_type: Note, Bug, Test, Question, Check, Next Time
+log_type_bg_color: #8764B8, #C81616, #14A019, #f6f628, #3D8CDF, #474747
