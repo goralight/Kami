@@ -16,7 +16,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.4.0"
+KamiVersion = "0.4.2"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -54,7 +54,7 @@ class TitleLabel:
         :param topframe: TitleFrame (The top frame)
         """
         MainTitle = ttk.Label(topframe,
-                              text="Kami",
+                              text="Kami Notes",
                               font=("Verdana", 24))
         SubTitle = ttk.Label(topframe,
                              text="QA Note Taker",
@@ -386,7 +386,7 @@ class OptionsContent:
             root.unbind("<Return>")
             # Changes title to the JIRA number
             InputTitle = JiraStr.get() + "-" + JiraNumberEntry.get()
-            root.title("Kami    " + InputTitle)
+            root.title("Kami Notes    " + InputTitle)
 
             # Creates frame for writing stuff
             WritingFrame = ttk.Frame(root)
