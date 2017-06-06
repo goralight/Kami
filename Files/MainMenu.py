@@ -1,10 +1,6 @@
-# coding=utf-8
-# from Tkinter import *
-# import tkFont
 from functions import *
 from Input import *
-# import ScrolledText
-# import tkMessageBox
+from ExcelFunctions import *
 import tkFileDialog
 import ttk
 
@@ -393,6 +389,11 @@ class OptionsContent:
             ColorFrame = Frame(root, height=15, highlightbackground="#474747",
                                highlightthickness=1)
 
+            root.protocol("WM_DELETE_WINDOW", lambda: Die(root))
+
+            # print ConfigList
+            Excel = InitExcel(ConfigList)
+
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
@@ -480,6 +481,3 @@ class OptionsContent:
 MainMenu = MainMenuFrames(root)
 Title = TitleLabel(MainMenu.TitleFrame)
 Options = OptionsContent(MainMenu.OptionsLabelFrame, MainMenu.TitleFrame)
-
-
-root.protocol("WM_DELETE_WINDOW", lambda: Die(root))

@@ -1,5 +1,11 @@
-# coding=utf-8
 from Files import MainMenu
+
+try:
+    from openpyxl import *
+except ImportError:
+    print "Oops!\nYou do not have OpenPyxl installed!"
+    # There should a pop up saying you dont have openpyxl installed
+    quit()
 
 ###############################################################################
 # List of things to do!

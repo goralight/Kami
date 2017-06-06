@@ -1,14 +1,10 @@
 from Tkinter import *
 import tkFont
-# import ScrolledText
-# import tkMessageBox
-# import tkFileDialog
 import ttk
-# import os
-# import time
 import datetime
 import winsound
 import threading
+from ExcelFunctions import InputExcel
 
 
 class EntryItemClass:
@@ -25,11 +21,13 @@ class EntryItemClass:
         self.root = root
         self.WhichType = WhichType
         self.TimerCount = TimerCount
+        self.StartingRow = 7
+        self.StartingLength = 1
 
-        self.root.bind("<KeyRelease-Return>", self.SaveInput)
         self.LogEntry = ttk.Entry(self.frame, width=90,
                                   font=tkFont.Font(family="Verdana", size=12))
         self.LogEntry.grid(column=0, row=1, columnspan=3, pady=(5, 5))
+        self.root.bind("<KeyRelease-Return>", self.SaveInput)
 
     def SaveInput(self, *args):
         """
@@ -38,10 +36,12 @@ class EntryItemClass:
         current time
         :return: EntryInput List
         """
-        EntryInput = [self.LogEntry.get(), self.WhichType.cget("text"),
-                      self.TimerCount.cget("text"), datetime.datetime.now().strftime("%H:%M:%S")]
-        if EntryInput[0] != "":  # If no input do nothing
-            print EntryInput
+
+        EntryInput = [self.WhichType.cget("text"), self.TimerCount.cget("text"),
+                      self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
+        if EntryInput[2] != "":  # If no input do nothing
+            InputExcel(EntryInput, self.StartingRow, self.StartingLength)
+            self.StartingRow += 1
             self.LogEntry.delete(0, 'end')
 
 
@@ -82,7 +82,7 @@ class SmallHistory:
         self.frame = frame
         self.HistoryCount = 1
 
-        self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#8764B8")
+        self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#3D8CDF")
         if self.HistoryCount != 0:
             self.SeeMoreLabel.grid(column=0, row=2, columnspan=3)
         self.SeeMoreLabel.bind("<Button-1>", self.ShowHistory)
