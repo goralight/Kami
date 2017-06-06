@@ -13,6 +13,6 @@ Within the Res folder there is a config.txt - These are your options within the 
 |jira_types:|List (entry, entry2, entry3)|List of JIRA types. Seperated via a comma and space (, )|
 |reporter_name:|Name (str)|Default name|
 |setup:|Setup of Environment (str)|Current environment testbed|
-|log_type:|List (entry, entry2, entry3)|List of note types|
-|log_type_bg_color:|List (entry, entry2, entry3)|List of colors. Linked to log_type. Amount must match|
-|charter_type:|List (entry, entry2, entry3)|List of Charter types.|
+|log_type:|List (entry, entry2, entry3)|List of note types. Seperated via a comma and space (, )|
+|log_type_bg_color:|List (entry, entry2, entry3)|List of colors. Linked to log_type. Amount must match. Seperated via a comma and space (, )|
+|charter_type:|List (entry, entry2, entry3)|List of Charter types. Seperated via a comma and space (, )|
