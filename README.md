@@ -1,6 +1,10 @@
 # Kami Notes - 0.5.1
 QA Note Taker. Designed for QA users who need to make quick notes on the bug testing they are completing. Made with JIRA / External save locations in mind. It is perfect for those needing to write down quick notes along side their testing to refer to later on.
 
+OpemPyxl is required for this tool. To install using pip, use the following command:
+`pip install openpyxl`
+and thats it!
+
 Within the Res folder there is a config.txt - These are your options within the tool.
 
 | Option        | Input           | Note  |
