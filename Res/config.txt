@@ -1,10 +1,11 @@
 enable_timer_default: 1
-default_timer: 60
+default_timer: 30
 enable_save_svn: 1
 default_svn_path: C:/Users/jfriend/Desktop/SVN
-default_local_save_path: C:/Users/jfriend/Desktop/Kami/JiraLogs
+default_local_save_path: C:/Users/jfriend/Desktop/JiraLogs/EP/S6
 jira_types: EP, WM, DS
 reporter_name: JFriend
-setup: W10, S6B, SQL2016, Chrome
+setup: W10, S6B5, SQL2016, Chrome
 log_type: Note, Bug, Test, Question, Check, Next Time
 log_type_bg_color: #8764B8, #C81616, #14A019, #f6f628, #3D8CDF, #474747
+charter_type: BFV, Recon, Survey, Capability, Deep Coverage, Exploration and Analysis, Function, Domain, Stress, Scenario, Claims, User, Risk

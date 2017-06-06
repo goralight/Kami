@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.4.2"
+KamiVersion = "0.5.0"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -179,8 +179,15 @@ class OptionsContent:
         # Defines the dropdown menu. JiraList is pulled from the config.txt.
         # The first of the list is the first of the menu and then the rest
         # follow
+
         JiraTypeList = ttk.OptionMenu(bottomframe, JiraStr,
                                       JiraList[0], *JiraList)
+
+        CharterStr = StringVar()
+
+        CharterTypeList = ttk.OptionMenu(bottomframe, CharterStr,
+                                         CharterType[0], *CharterType)
+
         # Defines the Entry for the Jira Number.
         JiraNumberEntry = ttk.Entry(bottomframe,
                                     width=6)
@@ -282,7 +289,8 @@ class OptionsContent:
                                              JiraStr,  # DropDown Menu
                                              JiraNumberEntry,
                                              ReporterNameEntry,
-                                             SetupEntry)
+                                             SetupEntry,
+                                             CharterStr)
 
             # List of charas needed for a path to be a path
             PathValidation = ["\\", "/", ":"]
@@ -434,16 +442,24 @@ class OptionsContent:
         JiraNumberEntry.grid(row=5, column=3,
                              sticky=E, padx=(0, 7))
 
+        ChaterLabel = ttk.Label(bottomframe,
+                                text="Charter Type")
+
+        ChaterLabel.grid(row=6, sticky=W, padx=(5, 0), pady=(0, 5))
+
+        CharterTypeList.grid(row=6, column=3,
+                             sticky=E, padx=(0, 7))
+
         # Defines the reporter name label
         ReporterNameLabel = ttk.Label(bottomframe,
-                                      text="Reporters name")
+                                      text="Reporters Name")
 
         # Defines the Report name Entry
         ReporterNameEntry = ttk.Entry(bottomframe, width=27)
         ReporterNameEntry.insert(END, ReporterName)  # Placeholder via config
 
         # Draws the reporter name Label
-        ReporterNameLabel.grid(row=6, sticky=W, padx=(5, 0), pady=(0, 5))
+        ReporterNameLabel.grid(row=8, sticky=W, padx=(5, 0), pady=(0, 5))
 
         # Defines the setup label
         SetupLabel = ttk.Label(bottomframe,
@@ -454,23 +470,23 @@ class OptionsContent:
         SetupEntry.insert(END, SetupInfo)  # Placeholder text defined by config
 
         # Draws the entry for the reporter name
-        ReporterNameEntry.grid(row=6, column=3,
+        ReporterNameEntry.grid(row=8, column=3,
                                sticky=E, padx=(0, 7))
 
         # Draws the setup label text
-        SetupLabel.grid(row=7, sticky=W, padx=(5, 0), pady=(0, 5))
+        SetupLabel.grid(row=9, sticky=W, padx=(5, 0), pady=(0, 5))
 
         # Draws the Setup Entry
-        SetupEntry.grid(row=7, column=3,
+        SetupEntry.grid(row=9, column=3,
                         sticky=E, padx=(0, 7))
 
         # Draws the Quit button
-        QuitButton.grid(row=8, column=0,
+        QuitButton.grid(row=10, column=0,
                         sticky=W, padx=(5, 0),
                         pady=(0, 5))
 
         # Draws the Confirm button
-        ConfirmButton.grid(row=8, column=3,
+        ConfirmButton.grid(row=10, column=3,
                            sticky=W+E, padx=(0, 5),
                            pady=(0, 5))
 

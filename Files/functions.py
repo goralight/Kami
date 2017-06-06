@@ -78,10 +78,15 @@ LogTypeColor = ConfigureOptions()[9]
 LogTypeColor = LogTypeColor.split(", ")
 LogTypeColor[0] = LogTypeColor[0][19:]
 
+# [10] # Charter Type List
+CharterType = ConfigureOptions()[10]
+CharterType = CharterType.split(", ")
+CharterType[0] = CharterType[0][14:]
+
 
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
                         LocalPath, JiraType, JiraNumber, ReportersName,
-                        SetupEntryInfo):
+                        SetupEntryInfo, CharterType):
     """
     Grabs the options set by the user and assigns them to their respective
     parameter.
@@ -116,11 +121,13 @@ def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
     JiraNumber = JiraNumber.get()
     ReportersName = ReportersName.get()
     SetupEntryInfo = SetupEntryInfo.get()
+    CharterTypeInfo = CharterType.get()
 
     # Once all assigned place in a list to work with.
     ConfigList = [TimerStatus, TimerCount, SVNStatus,
                   SVNPath, LocalPath, JiraType,
-                  JiraNumber, ReportersName, SetupEntryInfo]
+                  JiraNumber, ReportersName, SetupEntryInfo,
+                  CharterTypeInfo]
 
     return ConfigList
 

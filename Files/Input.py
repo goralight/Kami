@@ -21,7 +21,7 @@ class EntryItemClass:
         self.root = root
         self.WhichType = WhichType
         self.TimerCount = TimerCount
-        self.StartingRow = 7
+        self.StartingRow = 9
         self.StartingLength = 1
 
         self.LogEntry = ttk.Entry(self.frame, width=90,
