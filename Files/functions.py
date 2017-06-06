@@ -3,6 +3,7 @@
 # import ttk
 import tkMessageBox
 import os
+from shutil import copy
 # import time
 # import datetime
 # import winsound
@@ -152,15 +153,21 @@ def ClearWindow(*args):
         each.pack_forget()
 
 
-def Die(MainLoop):
+def Die(MainLoop, ConfigList, ExcelLocal):
     """
     Simple function to perform other processes before actually killing the
     script. Here could add saving / other close down features before it is
     killed from the user
     :param MainLoop: The Root frame to kill.
     """
-    # Placeholder
     print "It closed and I printed before I died... YAY!"
+    if "selected" in ConfigList[2]:
+        if not os.path.exists(ConfigList[3]):
+            os.makedirs(ConfigList[3])
+            copy(ExcelLocal, ConfigList[3])
+        else:
+            copy(ExcelLocal, ConfigList[3])
+
     MainLoop.destroy()  # Same as using the W10 kill protocol
 
 

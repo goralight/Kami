@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.5.0"
+KamiVersion = "0.5.1"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -397,18 +397,17 @@ class OptionsContent:
             ColorFrame = Frame(root, height=15, highlightbackground="#474747",
                                highlightthickness=1)
 
-            root.protocol("WM_DELETE_WINDOW", lambda: Die(root))
-
             # print ConfigList
-            Excel = InitExcel(ConfigList)
-
+            Excel = InitExcel(ConfigList)  # Not sure if need this to be a var
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
-            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel, CountDownTimerVar.TimerCountLabel)
+            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel, CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath)
             SmallHistory(WritingFrame)
             SeeThroughSlider(WritingFrame, root)
+
+            root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath))
 
         # Makes it so you can hit enter instead of clicking confirm
         root.bind("<Return>", ConfirmButtonFunctions)

@@ -8,7 +8,7 @@ from ExcelFunctions import InputExcel
 
 
 class EntryItemClass:
-    def __init__(self, frame, root, WhichType, TimerCount):
+    def __init__(self, frame, root, WhichType, TimerCount, ExcelPath):
         """
         This is the input from the user when they are actually inputting notes.
         Hitting the enter key causes the SaveInput function to be run.
@@ -23,6 +23,7 @@ class EntryItemClass:
         self.TimerCount = TimerCount
         self.StartingRow = 9
         self.StartingLength = 1
+        self.ExcelPath = ExcelPath
 
         self.LogEntry = ttk.Entry(self.frame, width=90,
                                   font=tkFont.Font(family="Verdana", size=12))
@@ -40,7 +41,7 @@ class EntryItemClass:
         EntryInput = [self.WhichType.cget("text"), self.TimerCount.cget("text"),
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
         if EntryInput[2] != "":  # If no input do nothing
-            InputExcel(EntryInput, self.StartingRow, self.StartingLength)
+            InputExcel(EntryInput, self.StartingRow, self.StartingLength, self.ExcelPath)
             self.StartingRow += 1
             self.LogEntry.delete(0, 'end')
 
