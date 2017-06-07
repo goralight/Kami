@@ -121,13 +121,17 @@ class SmallHistory:
         # print InputExcelVar.EntryInputList
         self.ShowMoreFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
 
-        for each in InputExcelVar.EntryInputList:
-            MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
-                                     font=("Verdana", 12), wraplength=900)
-            MoreHistoryLabel.pack()
-    # TODO: Make show history look better
-    # You need to make this look better, maybe a scroll down box? wont handle
-    # mass history well
+        if len(InputExcelVar.EntryInputList) <= 5:  # Change this number to be the history limit
+            for each in InputExcelVar.EntryInputList:
+                MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
+                                         font=("Verdana", 12), wraplength=900)
+                MoreHistoryLabel.pack()
+        else:
+            InputExcelVar.EntryInputList = InputExcelVar.EntryInputList[-5:]
+            for each in InputExcelVar.EntryInputList:
+                MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
+                                         font=("Verdana", 12), wraplength=900)
+                MoreHistoryLabel.pack()
 
 
 class TypeOfLog:

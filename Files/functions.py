@@ -1,13 +1,7 @@
-# from Tkinter import *
-# from tkinter.scrolledtext import ScrolledText <-- Not sure if need?
-# import ttk
 import tkMessageBox
 import os
 from shutil import copy
-# import time
-# import datetime
-# import winsound
-# import threading
+
 
 FirstCWD = os.path.dirname(os.path.realpath(__file__))
 ResDir = FirstCWD[:-5]+"\Res"

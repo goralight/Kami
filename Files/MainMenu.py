@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.5.5"
+KamiVersion = "0.5.6"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
