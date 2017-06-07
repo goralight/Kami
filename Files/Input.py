@@ -23,6 +23,7 @@ class EntryItemClass:
         self.TimerCount = TimerCount
         self.StartingRow = 9
         self.StartingLength = 1
+        self.EntryListInput = []
         self.ExcelPath = ExcelPath
 
         self.LogEntry = ttk.Entry(self.frame, width=90,
@@ -37,11 +38,11 @@ class EntryItemClass:
         current time
         :return: EntryInput List
         """
-
         EntryInput = [self.WhichType.cget("text"), self.TimerCount.cget("text"),
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
         if EntryInput[2] != "":  # If no input do nothing
-            InputExcel(EntryInput, self.StartingRow, self.StartingLength, self.ExcelPath)
+            global InputExcelVar
+            InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.StartingLength, self.ExcelPath, self.EntryListInput)
             self.StartingRow += 1
             self.LogEntry.delete(0, 'end')
 
@@ -70,18 +71,19 @@ class SeeThroughSlider:
         """
         ScaleEntryValue = round(self.SliderEntry.get(), 2)
         self.root.wm_attributes('-alpha', ScaleEntryValue)
-        # print ScaleEntryValue
 
 
 class SmallHistory:
-    def __init__(self, frame):
+    def __init__(self, frame, ShowMoreFrame):
         """
         Displays the last 3 entry history of writen notes. The history can be
         toggled via the see history label
         :param frame: The frame in which this sits in - Writing Frame
         """
         self.frame = frame
+        self.ShowMoreFrame = ShowMoreFrame
         self.HistoryCount = 1
+        self.MoreLess = 0  # 0=show non, 1=show more
 
         self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#3D8CDF")
         if self.HistoryCount != 0:
@@ -92,12 +94,40 @@ class SmallHistory:
         u.configure(underline=True)
         self.SeeMoreLabel.configure(font=u)
 
-    # This is where the actual science needs to happen ;)
     def ShowHistory(self, event):
-        # Read the newly created bug log, find the last 3 by getting Historycount
-        # adding that to the total lines found(?) and printing the last three, and then
-        # Assigning that value to HistoryCount
-        print "i was clicked!"
+        if self.MoreLess == 0:
+            self.PrintExcel()
+            try:
+                if InputExcelVar.EntryInputList:
+                    pass
+            except NameError:
+                return
+            self.SeeMoreLabel.configure(text="See Less")
+            self.MoreLess = 1
+        elif self.MoreLess == 1:
+            # run hide tool tip
+            for widget in self.ShowMoreFrame.winfo_children():
+                widget.destroy()
+            self.ShowMoreFrame.pack_forget()
+            self.SeeMoreLabel.configure(text="See History")
+            self.MoreLess = 0
+
+    def PrintExcel(self):
+        try:
+            if InputExcelVar.EntryInputList:
+                pass
+        except NameError:
+            return
+        # print InputExcelVar.EntryInputList
+        self.ShowMoreFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
+
+        for each in InputExcelVar.EntryInputList:
+            MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
+                                     font=("Verdana", 12), wraplength=900)
+            MoreHistoryLabel.pack()
+    # TODO: Make show history look better
+    # You need to make this look better, maybe a scroll down box? wont handle
+    # mass history well
 
 
 class TypeOfLog:
@@ -166,6 +196,7 @@ class TypeOfLog:
             self.colorframe.configure(background=self.WhichTypeBGColor[self.Index])
 
 
+# noinspection PyTypeChecker
 class CountDownTimer:
     def __init__(self, TimerStatus, TimerCount, frame):
         """
