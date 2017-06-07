@@ -4,7 +4,7 @@ QA Note Taker. Designed for QA users who need to make quick notes on the bug tes
 Kami Notes is written in Python. It makes use of Python 2.7.11
 If you wish to use Kami Notes you will need to download the correct version of python.
 
-OpemPyxl is required for this tool. To install using pip, use the following command:
+OpenPyxl is required for this tool. To install using pip, use the following command:
 
 `pip install openpyxl`
 
