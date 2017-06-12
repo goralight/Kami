@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.5.6"
+KamiVersion = "0.5.10"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -200,7 +200,7 @@ class OptionsContent:
         # Draws the timer input label.
         TimerInputLabel.grid(row=0, column=3, sticky=W+E, padx=(0, 47))
         # Draws the Timer Entry
-        TimerEntry.grid(row=0, column=3, padx=(5, 5), pady=(0, 1), sticky=E)
+        TimerEntry.grid(row=0, column=3, padx=(5, 5), pady=(0, 5), sticky=E)
 
         def CreateSVNEntry(status):
             """
@@ -244,7 +244,8 @@ class OptionsContent:
 
         # Draws the SVN browse for dir button
         SVNBrowseButton.grid(row=2, column=3,
-                             padx=(0, 5), sticky=E)
+                             padx=(0, 5),
+                             pady=(1, 5), sticky=E)
 
         # defines the PathToLocalLabel, just displays the text
         PathToLocalLabel = ttk.Label(bottomframe,
@@ -262,7 +263,7 @@ class OptionsContent:
                                          textvariable=var2)
             PathToLocalEntry.insert(END, LocalSavePathway)
             PathToLocalEntry.grid(row=3, column=3,
-                                  padx=(0, 5), sticky=E)
+                                  padx=(0, 5), pady=(0, 0), sticky=E)
             return PathToLocalEntry
 
         # Calls the defining and drawing of the Local Path entry
@@ -279,7 +280,7 @@ class OptionsContent:
             This is used to make the confirm button run more than one function
             on clicking it. It also contains the validation of the data
             inputted from the user. Once the validation is sound it will then
-            fire off the fucntion to go to the actal logging part of Kami
+            fire off the function to go to the actual logging part of Kami
             """
             ConfigList = ConfirmButtonReturn(OptionTimer,
                                              TimerEntry,
@@ -290,7 +291,8 @@ class OptionsContent:
                                              JiraNumberEntry,
                                              ReporterNameEntry,
                                              SetupEntry,
-                                             CharterStr)
+                                             CharterStr,
+                                             HTMLOption)
 
             # List of charas needed for a path to be a path
             PathValidation = ["\\", "/", ":"]
@@ -382,8 +384,7 @@ class OptionsContent:
 
             # Cleans the root window of the 2 frames being used.
             ClearWindow(bottomframe, topframe)
-            # scrolledtext = ScrolledText.ScrolledText(root, height=3, width=40)
-            # scrolledtext.pack()
+
             # print ConfigList  # Debugging
 
             # Removes the function linked to enter, see below
@@ -398,16 +399,16 @@ class OptionsContent:
                                highlightthickness=1)
             ShowMoreFrame = Frame(root)
 
-            # print ConfigList
             Excel = InitExcel(ConfigList)  # Not sure if need this to be a var
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
-
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
-            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel, CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath)
-            SmallHistory(WritingFrame, ShowMoreFrame)
+            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
+                           CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath,
+                           ConfigList)
+            SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
             SeeThroughSlider(WritingFrame, root)
 
             root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath))
@@ -429,7 +430,7 @@ class OptionsContent:
 
         # Draws the LoackPath Button
         PathToLocalBrowseButton.grid(row=4, column=3,
-                                     padx=(0, 5), sticky=E)
+                                     padx=(0, 5), pady=(0, 5), sticky=E)
 
         # Draws the Jira Label
         JiraNumberLabel.grid(row=5, column=0,
@@ -438,11 +439,13 @@ class OptionsContent:
 
         # Draws the Drop down menu
         JiraTypeList.grid(row=5, column=3,
-                          sticky=E, padx=(0, 55))
+                          sticky=E, padx=(0, 55),
+                          pady=(0, 0))
 
         # Draws the Jira Number entry
         JiraNumberEntry.grid(row=5, column=3,
-                             sticky=E, padx=(0, 7))
+                             sticky=E, padx=(0, 7),
+                             pady=(0, 0))
 
         ChaterLabel = ttk.Label(bottomframe,
                                 text="Charter Type")
@@ -450,7 +453,8 @@ class OptionsContent:
         ChaterLabel.grid(row=6, sticky=W, padx=(5, 0), pady=(0, 5))
 
         CharterTypeList.grid(row=6, column=3,
-                             sticky=E, padx=(0, 7))
+                             sticky=E, padx=(0, 7),
+                             pady=(5, 5))
 
         # Defines the reporter name label
         ReporterNameLabel = ttk.Label(bottomframe,
@@ -473,22 +477,38 @@ class OptionsContent:
 
         # Draws the entry for the reporter name
         ReporterNameEntry.grid(row=8, column=3,
-                               sticky=E, padx=(0, 7))
+                               sticky=E, padx=(0, 7),
+                               pady=(0, 5))
 
         # Draws the setup label text
         SetupLabel.grid(row=9, sticky=W, padx=(5, 0), pady=(0, 5))
 
         # Draws the Setup Entry
         SetupEntry.grid(row=9, column=3,
-                        sticky=E, padx=(0, 7))
+                        sticky=E, padx=(0, 7),
+                        pady=(0, 5))
+
+        # This is how checkboxes should be done. Without intVar \/
+        HTMLOption = ttk.Checkbutton(bottomframe,
+                                     text="Generate HTML",
+                                     state="normal",)
+
+        if SaveHTMLOption == 1:  # if config = 1, make it remove box and make ticked
+            HTMLOption.state(["!alternate", "selected"])
+        else:  # else just make it blank
+            HTMLOption.state(["!alternate"])
+
+        HTMLOption.grid(row=10, column=3,
+                        sticky=E, padx=(0, 6),
+                        pady=(0, 5))
 
         # Draws the Quit button
-        QuitButton.grid(row=10, column=0,
+        QuitButton.grid(row=11, column=0,
                         sticky=W, padx=(5, 0),
                         pady=(0, 5))
 
         # Draws the Confirm button
-        ConfirmButton.grid(row=10, column=3,
+        ConfirmButton.grid(row=11, column=3,
                            sticky=W+E, padx=(0, 5),
                            pady=(0, 5))
 

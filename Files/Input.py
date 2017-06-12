@@ -8,7 +8,7 @@ from ExcelFunctions import InputExcel
 
 
 class EntryItemClass:
-    def __init__(self, frame, root, WhichType, TimerCount, ExcelPath):
+    def __init__(self, frame, root, WhichType, TimerCount, ExcelPath, ConfigList):
         """
         This is the input from the user when they are actually inputting notes.
         Hitting the enter key causes the SaveInput function to be run.
@@ -22,9 +22,9 @@ class EntryItemClass:
         self.WhichType = WhichType
         self.TimerCount = TimerCount
         self.StartingRow = 9
-        self.StartingLength = 1
         self.EntryListInput = []
         self.ExcelPath = ExcelPath
+        self.ConfigList = ConfigList
 
         self.LogEntry = ttk.Entry(self.frame, width=90,
                                   font=tkFont.Font(family="Verdana", size=12))
@@ -42,7 +42,7 @@ class EntryItemClass:
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
         if EntryInput[2] != "":  # If no input do nothing
             global InputExcelVar
-            InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.StartingLength, self.ExcelPath, self.EntryListInput)
+            InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.ExcelPath, self.EntryListInput, self.ConfigList)
             self.StartingRow += 1
             self.LogEntry.delete(0, 'end')
 
@@ -74,7 +74,7 @@ class SeeThroughSlider:
 
 
 class SmallHistory:
-    def __init__(self, frame, ShowMoreFrame):
+    def __init__(self, frame, ShowMoreFrame, HistoryListCap):
         """
         Displays the last 3 entry history of writen notes. The history can be
         toggled via the see history label
@@ -84,6 +84,7 @@ class SmallHistory:
         self.ShowMoreFrame = ShowMoreFrame
         self.HistoryCount = 1
         self.MoreLess = 0  # 0=show non, 1=show more
+        self.HistoryListCap = int(HistoryListCap)
 
         self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#3D8CDF")
         if self.HistoryCount != 0:
@@ -96,6 +97,9 @@ class SmallHistory:
 
     def ShowHistory(self, event):
         if self.MoreLess == 0:
+            LineCanvas = Canvas(self.ShowMoreFrame, width=900, height=10)
+            LineCanvas.pack()
+            LineCanvas.create_line(0, 5, 900, 5, fill="#474747")
             self.PrintExcel()
             try:
                 if InputExcelVar.EntryInputList:
@@ -112,6 +116,11 @@ class SmallHistory:
             self.SeeMoreLabel.configure(text="See History")
             self.MoreLess = 0
 
+    def DrawHRLine(self):
+        HRLine = Canvas(self.ShowMoreFrame, width=900, height=10)
+        HRLine.pack()
+        HRLine.create_line(435, 5, 470, 5, fill="#474747")
+
     def PrintExcel(self):
         try:
             if InputExcelVar.EntryInputList:
@@ -121,17 +130,21 @@ class SmallHistory:
         # print InputExcelVar.EntryInputList
         self.ShowMoreFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
 
-        if len(InputExcelVar.EntryInputList) <= 5:  # Change this number to be the history limit
+        # if list of input <= config history cap or if history cap is 0 (0=everything)
+        if len(InputExcelVar.EntryInputList) <= self.HistoryListCap or self.HistoryListCap == 0:
             for each in InputExcelVar.EntryInputList:
                 MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
-                                         font=("Verdana", 12), wraplength=900)
+                                         font=("Verdana", 10), wraplength=900)
                 MoreHistoryLabel.pack()
+                self.DrawHRLine()
+
         else:
-            InputExcelVar.EntryInputList = InputExcelVar.EntryInputList[-5:]
+            InputExcelVar.EntryInputList = InputExcelVar.EntryInputList[-self.HistoryListCap:]
             for each in InputExcelVar.EntryInputList:
                 MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
-                                         font=("Verdana", 12), wraplength=900)
+                                         font=("Verdana", 10), wraplength=900)
                 MoreHistoryLabel.pack()
+                self.DrawHRLine()
 
 
 class TypeOfLog:

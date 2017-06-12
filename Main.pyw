@@ -1,23 +1,5 @@
+from Files import functions
 from Files import MainMenu
-
-try:
-    from openpyxl import *
-except ImportError:
-    print "Oops!\nYou do not have OpenPyxl installed!"
-    # There should a pop up saying you dont have openpyxl installed
-    quit()
-
-###############################################################################
-# List of things to do!
-#
-# Make gui
-#   needs to have a menu when you fire it to allow options to be changed
-#       options can be edited so that the default is stored in a options file
-#       options should be default timer, ...
-#   needs a logical flow.
-#
-# Able to edit entries after being submitted
-###############################################################################
 
 # Settings for the root window (lock the resize, default size etc...
 MainMenu.root.resizable(0, 0)  # Disable resizing

@@ -1,6 +1,7 @@
 import tkMessageBox
 import os
 from shutil import copy
+import pip
 
 
 FirstCWD = os.path.dirname(os.path.realpath(__file__))
@@ -27,6 +28,7 @@ def ConfigureOptions():
     # 8 = log types
     # 9 = log type colors
     # 10 = charter type
+    # 11 = show history number
 
 # [0] # Enable timer tick box
 EnableTimerTickBox = ConfigureOptions()[0]
@@ -79,10 +81,20 @@ CharterType = ConfigureOptions()[10]
 CharterType = CharterType.split(", ")
 CharterType[0] = CharterType[0][14:]
 
+# [11] # Show History List
+HistoryListCap = ConfigureOptions()[11]
+HistoryListCap = HistoryListCap[21:]
+
+# [12] # Save to HTML
+SaveHTMLOption = ConfigureOptions()[12]
+SaveHTMLOption = SaveHTMLOption[14:]
+SaveHTMLOption = int(SaveHTMLOption)
+
+
 
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
                         LocalPath, JiraType, JiraNumber, ReportersName,
-                        SetupEntryInfo, CharterType):
+                        SetupEntryInfo, CharterType, HTMLStatus):
     """
     Grabs the options set by the user and assigns them to their respective
     parameter.
@@ -99,11 +111,12 @@ def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
     :param ReportersName: String, name of the reporter for the current testing
     :param SetupEntryInfo: String, current setup for the testing environment
     :param CharterType: String, Which charter type has been selected
+    :param HTMLStatus: String, If a HTML copy will be created or not
 
     Example:
     [('selected',), '60', ('selected',), 'C:/Users/jfriend.SPIDEX/Desktop/SVN',
     'C:/Users/jfriend.SPIDEX/Desktop/Kami/JiraLogs', 'EP', '426', 'JFriend',
-    'W10, S4B26, SQL2016, Chrome', 'BFV']
+    'W10, S4B26, SQL2016, Chrome', 'BFV', ('selected',)]
     """
 
     # List of getters for pulling data of where their respective location is
@@ -119,12 +132,13 @@ def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
     ReportersName = ReportersName.get()
     SetupEntryInfo = SetupEntryInfo.get()
     CharterTypeInfo = CharterType.get()
+    HTMLStatus = HTMLStatus.state()
 
     # Once all assigned place in a list to work with.
     ConfigList = [TimerStatus, TimerCount, SVNStatus,
                   SVNPath, LocalPath, JiraType,
                   JiraNumber, ReportersName, SetupEntryInfo,
-                  CharterTypeInfo]
+                  CharterTypeInfo, HTMLStatus]
 
     return ConfigList
 
@@ -149,12 +163,18 @@ def ClearWindow(*args):
         each.pack_forget()
 
 
+def CreateHTML():
+    print "make the html!"
+
+
 def Die(MainLoop, ConfigList, ExcelLocal):
     """
     Simple function to perform other processes before actually killing the
     script. Here could add saving / other close down features before it is
     killed from the user
     :param MainLoop: The Root frame to kill.
+    :param ConfigList: List of settings, used to define what the user asked for
+    :param ExcelLocal: Local path save of the excel just been created
     """
     print "It closed and I printed before I died... YAY!"
     if "selected" in ConfigList[2]:
@@ -164,9 +184,19 @@ def Die(MainLoop, ConfigList, ExcelLocal):
         else:
             copy(ExcelLocal, ConfigList[3])
 
+    if "selected" in ConfigList[10]:
+        CreateHTML()
+
     MainLoop.destroy()  # Same as using the W10 kill protocol
 
 
-# Placeholder function
-def PrintMe():
-    print "I am a placeholder!"
+def InstallModule(package):
+    PipList = str(pip.get_installed_distributions())
+    if package not in PipList:
+        print "Oops! You don't seem to have", package, "Installed!"
+        print "Installing", package, ". . ."
+        pip.main(['install', package])
+
+# install all the required packages!
+# Could make a list of packages and then parse that through?
+InstallModule("openpyxl")
