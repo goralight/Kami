@@ -91,7 +91,6 @@ SaveHTMLOption = SaveHTMLOption[14:]
 SaveHTMLOption = int(SaveHTMLOption)
 
 
-
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
                         LocalPath, JiraType, JiraNumber, ReportersName,
                         SetupEntryInfo, CharterType, HTMLStatus):
