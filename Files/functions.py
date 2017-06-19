@@ -3,6 +3,14 @@ import os
 from shutil import copy
 import pip
 
+"""
+Name:    functions.py
+Desc:    File containing all of the global functions which are used throughout
+         Kami. Handles the loading of the config file along with validation error
+         messages, module installs with pip, storing the config options from the
+         options window, etc
+Imports: 
+"""
 
 FirstCWD = os.path.dirname(os.path.realpath(__file__))
 ResDir = FirstCWD[:-5]+"\Res"
@@ -29,6 +37,7 @@ def ConfigureOptions():
     # 9 = log type colors
     # 10 = charter type
     # 11 = show history number
+    # 12 = save to html option
 
 # [0] # Enable timer tick box
 EnableTimerTickBox = ConfigureOptions()[0]
@@ -146,7 +155,7 @@ def ValidationError(ErrorMessage):
     """
     Simple error popup window which has the title Validation Error and
     contains the error messages which is passed through as a parameter
-    :param ErrorMessage: String of the errror
+    :param ErrorMessage: String of the error
     :return: The popup window itself
     """
     tkMessageBox.showerror("Validation Error!", ErrorMessage)
@@ -175,7 +184,7 @@ def Die(MainLoop, ConfigList, ExcelLocal):
     :param ConfigList: List of settings, used to define what the user asked for
     :param ExcelLocal: Local path save of the excel just been created
     """
-    print "It closed and I printed before I died... YAY!"
+    # print "It closed and I printed before I died... YAY!"
     if "selected" in ConfigList[2]:
         if not os.path.exists(ConfigList[3]):
             os.makedirs(ConfigList[3])
@@ -190,12 +199,19 @@ def Die(MainLoop, ConfigList, ExcelLocal):
 
 
 def InstallModule(package):
-    PipList = str(pip.get_installed_distributions())
-    if package not in PipList:
-        print "Oops! You don't seem to have", package, "Installed!"
-        print "Installing", package, ". . ."
-        pip.main(['install', package])
+    """
+    Simple function to install the needed modules for the user if they don't
+    have them installed. Requires pip to make use of it.
+    :param package: List, string list of required packages
+    """
+    PipList = str(pip.get_installed_distributions())  # Get list of installed modules
+    for item in package:
+        if item not in PipList:
+            print "Oops! You don't seem to have", item, "Installed!"
+            print "Installing", item, ". . ."
+            pip.main(['install', item])
+            print ""
 
-# install all the required packages!
-# Could make a list of packages and then parse that through?
-InstallModule("openpyxl")
+NeededModules = ["openpyxl", "html"]
+
+InstallModule(NeededModules)

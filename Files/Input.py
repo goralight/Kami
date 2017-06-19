@@ -6,6 +6,15 @@ import winsound
 import threading
 from ExcelFunctions import InputExcel
 
+"""
+Name:    Input.py
+Desc:    Manages the frames and widgets which accept input from the user. The "input"
+         window of Kami. The Entry widget, history, timer, etc can be found within
+         this window. This is the window which the user will actually use to commit
+         inputs to the excel file.
+Imports: ExcelFunctions
+"""
+
 
 class EntryItemClass:
     def __init__(self, frame, root, WhichType, TimerCount, ExcelPath, ConfigList):
@@ -29,7 +38,7 @@ class EntryItemClass:
         self.LogEntry = ttk.Entry(self.frame, width=90,
                                   font=tkFont.Font(family="Verdana", size=12))
         self.LogEntry.grid(column=0, row=1, columnspan=3, pady=(5, 5))
-        self.root.bind("<KeyRelease-Return>", self.SaveInput)
+        self.root.bind("<Return>", self.SaveInput)
 
     def SaveInput(self, *args):
         """
@@ -42,9 +51,13 @@ class EntryItemClass:
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
         if EntryInput[2] != "":  # If no input do nothing
             global InputExcelVar
-            InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.ExcelPath, self.EntryListInput, self.ConfigList)
-            self.StartingRow += 1
-            self.LogEntry.delete(0, 'end')
+            InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.ExcelPath,
+                                       self.EntryListInput, self.ConfigList)
+            if InputExcelVar.Error != 1:
+                self.StartingRow += 1
+                self.LogEntry.delete(0, 'end')
+            else:
+                InputExcelVar.Error = 0
 
 
 class SeeThroughSlider:
@@ -292,6 +305,8 @@ class CountDownTimer:
         has changed. Purple for paused, black for ticking and red if ticking
         but below the 20% mark
         """
+        if str(self.TimerCount) == "0:00:00":
+            return
         if self.TimerState == 1:
             self.TimerState = 0
             self.TimerCountLabel.configure(foreground="#8150E2")
