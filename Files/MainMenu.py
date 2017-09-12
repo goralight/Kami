@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.5.11"
+KamiVersion = "0.6.0"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -51,13 +51,21 @@ class TitleLabel:
         """
         MainTitle = ttk.Label(topframe,
                               text="Kami Notes",
-                              font=("Verdana", 24))
+                              font=("Verdana", 24),
+                              cursor="hand2")
         SubTitle = ttk.Label(topframe,
                              text="QA Note Taker",
-                             font="Verdana")
+                             font="Verdana",
+                             cursor="hand2")
         VersionNumber = ttk.Label(topframe,
                                   text=KamiVersion,
-                                  font=("Verdana", 8))
+                                  font=("Verdana", 8),
+                                  cursor="hand2")
+
+        MainTitle.bind("<Button-1>", DisplayAbout)
+        SubTitle.bind("<Button-1>", DisplayAbout)
+        VersionNumber.bind("<Button-1>", DisplayAbout)
+
         MainTitle.pack()
         SubTitle.pack()
         VersionNumber.pack()
@@ -404,11 +412,15 @@ class OptionsContent:
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
+
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
+
+            SmallHistoryVar = SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
+
             EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
                            CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath,
-                           ConfigList)
-            SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
+                           ConfigList, SmallHistoryVar)
+            ###
             SeeThroughSlider(WritingFrame, root)
 
             root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath))
@@ -498,9 +510,11 @@ class OptionsContent:
         else:  # else just make it blank
             HTMLOption.state(["!alternate"])
 
-        HTMLOption.grid(row=10, column=3,
-                        sticky=E, padx=(0, 6),
-                        pady=(0, 5))
+
+        # TODO: Finish me off \/
+        # HTMLOption.grid(row=10, column=3,
+        #                 sticky=E, padx=(0, 6),
+        #                 pady=(0, 5))
 
         # Draws the Quit button
         QuitButton.grid(row=11, column=0,

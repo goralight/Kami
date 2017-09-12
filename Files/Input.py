@@ -17,7 +17,7 @@ Imports: ExcelFunctions
 
 
 class EntryItemClass:
-    def __init__(self, frame, root, WhichType, TimerCount, ExcelPath, ConfigList):
+    def __init__(self, frame, root, WhichType, TimerCount, ExcelPath, ConfigList, History):
         """
         This is the input from the user when they are actually inputting notes.
         Hitting the enter key causes the SaveInput function to be run.
@@ -34,10 +34,12 @@ class EntryItemClass:
         self.EntryListInput = []
         self.ExcelPath = ExcelPath
         self.ConfigList = ConfigList
+        self.History = History
 
         self.LogEntry = ttk.Entry(self.frame, width=90,
                                   font=tkFont.Font(family="Verdana", size=12))
         self.LogEntry.grid(column=0, row=1, columnspan=3, pady=(5, 5))
+        self.LogEntry.focus()
         self.root.bind("<Return>", self.SaveInput)
 
     def SaveInput(self, *args):
@@ -47,6 +49,7 @@ class EntryItemClass:
         current time
         :return: EntryInput List
         """
+
         EntryInput = [self.WhichType.cget("text"), self.TimerCount.cget("text"),
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
         if EntryInput[2] != "":  # If no input do nothing
@@ -58,6 +61,12 @@ class EntryItemClass:
                 self.LogEntry.delete(0, 'end')
             else:
                 InputExcelVar.Error = 0
+
+        print self.History.MoreLess
+
+        if self.History.MoreLess == 1:
+            self.History.TearDownHistory()
+            self.History.PrintExcel()
 
 
 class SeeThroughSlider:
@@ -109,6 +118,7 @@ class SmallHistory:
         self.SeeMoreLabel.configure(font=u)
 
     def ShowHistory(self, event):
+
         if self.MoreLess == 0:
             LineCanvas = Canvas(self.ShowMoreFrame, width=900, height=10)
             LineCanvas.pack()
@@ -129,6 +139,13 @@ class SmallHistory:
             self.SeeMoreLabel.configure(text="See History")
             self.MoreLess = 0
 
+    def TearDownHistory(self):
+        for widget in self.ShowMoreFrame.winfo_children():
+            widget.destroy()
+        LineCanvas = Canvas(self.ShowMoreFrame, width=900, height=10)
+        LineCanvas.pack()
+        LineCanvas.create_line(0, 5, 900, 5, fill="#474747")
+
     def DrawHRLine(self):
         HRLine = Canvas(self.ShowMoreFrame, width=900, height=10)
         HRLine.pack()
@@ -145,7 +162,9 @@ class SmallHistory:
 
         # if list of input <= config history cap or if history cap is 0 (0=everything)
         if len(InputExcelVar.EntryInputList) <= self.HistoryListCap or self.HistoryListCap == 0:
+            # print InputExcelVar.EntryInputList
             for each in InputExcelVar.EntryInputList:
+                # print each
                 MoreHistoryLabel = Label(self.ShowMoreFrame, text=each, anchor=CENTER,
                                          font=("Verdana", 10), wraplength=900)
                 MoreHistoryLabel.pack()

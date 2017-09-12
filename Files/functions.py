@@ -197,6 +197,31 @@ def Die(MainLoop, ConfigList, ExcelLocal):
 
     MainLoop.destroy()  # Same as using the W10 kill protocol
 
+AboutInfo = """Written by John Friend (Goralight)
+Work Email: john.friend@spidex.co.uk
+Email: goralight@gmail.com
+
+Designed for QA team members for
+quickly and effortlessly writing
+down notes about their bug tracking or
+other note taking processes.
+
+Takes huge inspiration from Rapid
+Reporter.
+
+Originally created for Spidex Software
+Writen in Python and TKinter
+
+Github url:
+https://github.com/goralight/Kami-Notes
+
+\t        <3
+"""
+
+
+def DisplayAbout(*args):
+    tkMessageBox.showinfo("About Kami Notes", AboutInfo)
+
 
 def InstallModule(package):
     """
