@@ -1,4 +1,4 @@
-# Kami Notes - 0.5.11
+# Kami Notes - 0.6.0
 QA Note Taker. Designed for QA users who need to make quick notes on the bug testing they are completing. Made with JIRA / External save locations in mind. It is perfect for those needing to write down quick notes along side their testing to refer to later on.
 
 Kami Notes is written in Python. It makes use of **Python 2.7.11**
