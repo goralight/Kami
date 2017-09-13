@@ -1,4 +1,4 @@
-# Kami Notes - 0.6.0
+# Kami Notes - 0.6.1
 QA Note Taker. Designed for QA users who need to make quick notes on the bug testing they are completing. Made with JIRA / External save locations in mind. It is perfect for those needing to write down quick notes along side their testing to refer to later on.
 
 Kami Notes is written in Python. It makes use of **Python 2.7.11**
@@ -7,7 +7,7 @@ OpenPyxl is required for this tool. Running Kami for the first will install it f
 
 Within the Res folder there is a config.txt - These are your options within the tool.
 
-Note: Saving to HTML right now does nothing...
+If you edit the setup entry within Kami, those updates will be applied to the config.txt.
 
 | Option        | Input           | Note  |
 | ------------- |-----------------|-------|
