@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.0"
+KamiVersion = "0.6.1"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -411,6 +411,8 @@ class OptionsContent:
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
+            SaveSetUpChanges(SetupEntry)
+
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
 
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
@@ -509,7 +511,6 @@ class OptionsContent:
             HTMLOption.state(["!alternate", "selected"])
         else:  # else just make it blank
             HTMLOption.state(["!alternate"])
-
 
         # TODO: Finish me off \/
         # HTMLOption.grid(row=10, column=3,

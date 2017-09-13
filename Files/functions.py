@@ -100,6 +100,27 @@ SaveHTMLOption = SaveHTMLOption[14:]
 SaveHTMLOption = int(SaveHTMLOption)
 
 
+def SaveSetUpChanges(SetUpEntryParam):
+    """
+    Saves what the user inputs as the setup to the config. Saves the user
+    entering the data manually everytime the env changes.
+
+    :param SetUpEntryParam:  Set up entry from main menu.
+    """
+
+    # print SetUpEntryParam.get()
+    with open(ResDir+"\config.txt", "r") as config:
+        data = config.readlines()
+        config.close()
+
+    # change line 7 with \/. Needs to \n.
+    data[7] = "setup: {0}\n".format(SetUpEntryParam.get())
+
+    with open(ResDir+"\config.txt", 'w') as config:
+        config.writelines(data)
+        config.close()
+
+
 def ConfirmButtonReturn(TimerStatus, TimerCount, SVNStatus, SVNPath,
                         LocalPath, JiraType, JiraNumber, ReportersName,
                         SetupEntryInfo, CharterType, HTMLStatus):

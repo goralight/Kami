@@ -62,11 +62,10 @@ class EntryItemClass:
             else:
                 InputExcelVar.Error = 0
 
-        print self.History.MoreLess
-
-        if self.History.MoreLess == 1:
-            self.History.TearDownHistory()
-            self.History.PrintExcel()
+            print self.History.MoreLess
+            if self.History.MoreLess == 1:
+                self.History.TearDownHistory()
+                self.History.PrintExcel()
 
 
 class SeeThroughSlider:
