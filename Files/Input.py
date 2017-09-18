@@ -40,6 +40,8 @@ class EntryItemClass:
                                   font=tkFont.Font(family="Verdana", size=12))
         self.LogEntry.grid(column=0, row=1, columnspan=3, pady=(5, 5))
         self.LogEntry.focus()
+
+        self.LogEntry.bind("<Control-KeyRelease-a>", self.SelectAll)
         self.root.bind("<Return>", self.SaveInput)
 
     def SaveInput(self, *args):
@@ -52,6 +54,9 @@ class EntryItemClass:
 
         EntryInput = [self.WhichType.cget("text"), self.TimerCount.cget("text"),
                       self.LogEntry.get(), datetime.datetime.now().strftime("%H:%M:%S")]
+        if EntryInput[2].isspace():  # If just space / nl do nothing
+            self.LogEntry.delete(0, 'end')
+            return
         if EntryInput[2] != "":  # If no input do nothing
             global InputExcelVar
             InputExcelVar = InputExcel(EntryInput, self.StartingRow, self.ExcelPath,
@@ -62,10 +67,19 @@ class EntryItemClass:
             else:
                 InputExcelVar.Error = 0
 
-            print self.History.MoreLess
+            # print self.History.MoreLess
             if self.History.MoreLess == 1:
                 self.History.TearDownHistory()
                 self.History.PrintExcel()
+
+    def SelectAll(self, event):
+        # print('entry.get():', self.LogEntry.get())
+        # print('event.widget.get():', event.widget.get())
+
+        # select text
+        event.widget.select_range(0, 'end')
+        # move cursor to the end
+        event.widget.icursor('end')
 
 
 class SeeThroughSlider:
@@ -117,6 +131,11 @@ class SmallHistory:
         self.SeeMoreLabel.configure(font=u)
 
     def ShowHistory(self, event):
+        try:  # This stops the many lines being printed if user clicks see more before entering anything
+            # print "printing:", InputExcelVar.EntryInput
+            InputExcelVar.EntryInput
+        except NameError:
+            return
 
         if self.MoreLess == 0:
             LineCanvas = Canvas(self.ShowMoreFrame, width=900, height=10)

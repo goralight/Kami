@@ -100,6 +100,7 @@ SaveHTMLOption = SaveHTMLOption[14:]
 SaveHTMLOption = int(SaveHTMLOption)
 
 
+# Make this so it saves all options not just env
 def SaveSetUpChanges(SetUpEntryParam):
     """
     Saves what the user inputs as the setup to the config. Saves the user
@@ -107,7 +108,6 @@ def SaveSetUpChanges(SetUpEntryParam):
 
     :param SetUpEntryParam:  Set up entry from main menu.
     """
-
     # print SetUpEntryParam.get()
     with open(ResDir+"\config.txt", "r") as config:
         data = config.readlines()
