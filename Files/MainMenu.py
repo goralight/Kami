@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.2"
+KamiVersion = "0.6.3"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -393,7 +393,7 @@ class OptionsContent:
             # Cleans the root window of the 2 frames being used.
             ClearWindow(bottomframe, topframe)
 
-            # print ConfigList  # Debugging
+            # print ConfigList
 
             # Removes the function linked to enter, see below
             root.unbind("<Return>")
@@ -411,7 +411,7 @@ class OptionsContent:
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
-            SaveSetUpChanges(SetupEntry)
+            SaveSetUpChanges(OptionTimer, TimerEntry, OptionSaveSVN, CreateSVNEntry, CreateLocalPath, ReporterNameEntry, SetupEntry)
 
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
 
@@ -419,13 +419,15 @@ class OptionsContent:
 
             SmallHistoryVar = SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
 
-            EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
-                           CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath,
-                           ConfigList, SmallHistoryVar)
-            ###
+            EntryItemClassVar = EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
+                                               CountDownTimerVar.TimerCountLabel, Excel.CurrentWorkingExcelPath,
+                                               ConfigList, SmallHistoryVar)
+
             SeeThroughSlider(WritingFrame, root)
 
-            root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath))
+            OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
+
+            root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath, BugNumber=str(ConfigList[5])+"-"+str(ConfigList[6])))
 
         # Makes it so you can hit enter instead of clicking confirm
         root.bind("<Return>", ConfirmButtonFunctions)

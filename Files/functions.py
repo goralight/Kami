@@ -100,8 +100,10 @@ SaveHTMLOption = SaveHTMLOption[14:]
 SaveHTMLOption = int(SaveHTMLOption)
 
 
-# Make this so it saves all options not just env
-def SaveSetUpChanges(SetUpEntryParam):
+def SaveSetUpChanges(TimerOptionParam, TimerParam,
+                     SVNOptionParam, SVNPathParam,
+                     LocalPathParam, ReporterParam,
+                     SetUpEntryParam):
     """
     Saves what the user inputs as the setup to the config. Saves the user
     entering the data manually everytime the env changes.
@@ -113,7 +115,22 @@ def SaveSetUpChanges(SetUpEntryParam):
         data = config.readlines()
         config.close()
 
-    # change line 7 with \/. Needs to \n.
+    # change line 7 on the txt with below. Needs to \n.
+    if "selected" in TimerOptionParam.state():
+        data[0] = "enable_timer_default: 1\n"
+    else:
+        data[0] = "enable_timer_default: 0\n"
+
+    data[1] = "default_timer: {0}\n".format(TimerParam.get())
+
+    if "selected" in SVNOptionParam.state():
+        data[2] = "enable_save_svn: 1\n"
+    else:
+        data[2] = "enable_save_svn: 0\n"
+
+    data[3] = "default_svn_path: {0}\n".format(SVNPathParam.get())
+    data[4] = "default_local_save_path: {0}\n".format(LocalPathParam.get())
+    data[6] = "reporter_name: {0}\n".format(ReporterParam.get())
     data[7] = "setup: {0}\n".format(SetUpEntryParam.get())
 
     with open(ResDir+"\config.txt", 'w') as config:
@@ -196,7 +213,7 @@ def CreateHTML():
     print "make the html!"
 
 
-def Die(MainLoop, ConfigList, ExcelLocal):
+def Die(MainLoop, ConfigList, ExcelLocal, BugNumber):
     """
     Simple function to perform other processes before actually killing the
     script. Here could add saving / other close down features before it is
@@ -207,11 +224,11 @@ def Die(MainLoop, ConfigList, ExcelLocal):
     """
     # print "It closed and I printed before I died... YAY!"
     if "selected" in ConfigList[2]:
-        if not os.path.exists(ConfigList[3]):
-            os.makedirs(ConfigList[3])
-            copy(ExcelLocal, ConfigList[3])
+        if not os.path.exists(ConfigList[3]+"/"+BugNumber):
+            os.makedirs(ConfigList[3]+"/"+BugNumber)
+            copy(ExcelLocal, ConfigList[3]+"/"+BugNumber)
         else:
-            copy(ExcelLocal, ConfigList[3])
+            copy(ExcelLocal, ConfigList[3]+"/"+BugNumber)
 
     if "selected" in ConfigList[10]:
         CreateHTML()
@@ -219,7 +236,6 @@ def Die(MainLoop, ConfigList, ExcelLocal):
     MainLoop.destroy()  # Same as using the W10 kill protocol
 
 AboutInfo = """Written by John Friend (Goralight)
-Work Email: john.friend@spidex.co.uk
 Email: goralight@gmail.com
 
 Designed for QA team members for
@@ -227,11 +243,8 @@ quickly and effortlessly writing
 down notes about their bug tracking or
 other note taking processes.
 
-Takes huge inspiration from Rapid
-Reporter.
-
-Originally created for Spidex Software
-Writen in Python and TKinter
+Email me if you have any issues or
+requests.
 
 Github url:
 https://github.com/goralight/Kami-Notes

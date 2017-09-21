@@ -1,6 +1,7 @@
 from Tkinter import *
 import tkFont
 import ttk
+import os
 import datetime
 import winsound
 import threading
@@ -72,7 +73,11 @@ class EntryItemClass:
                 self.History.TearDownHistory()
                 self.History.PrintExcel()
 
-    def SelectAll(self, event):
+    @staticmethod
+    def SelectAll(event):
+        """
+        Allows the user to use CTRL+a to select all text within entry widget
+        """
         # print('entry.get():', self.LogEntry.get())
         # print('event.widget.get():', event.widget.get())
 
@@ -121,13 +126,13 @@ class SmallHistory:
         self.MoreLess = 0  # 0=show non, 1=show more
         self.HistoryListCap = int(HistoryListCap)
 
-        self.SeeMoreLabel = ttk.Label(self.frame, text="See History", cursor="hand2", foreground="#3D8CDF")
+        self.SeeMoreLabel = ttk.Label(self.frame, text="History", cursor="hand2", )
         if self.HistoryCount != 0:
             self.SeeMoreLabel.grid(column=0, row=2, columnspan=3)
         self.SeeMoreLabel.bind("<Button-1>", self.ShowHistory)
 
         u = tkFont.Font(self.SeeMoreLabel, self.SeeMoreLabel.cget("font"))
-        u.configure(underline=True)
+        # u.configure(underline=True)
         self.SeeMoreLabel.configure(font=u)
 
     def ShowHistory(self, event):
@@ -147,14 +152,14 @@ class SmallHistory:
                     pass
             except NameError:
                 return
-            self.SeeMoreLabel.configure(text="See Less")
+            self.SeeMoreLabel.configure(text="Hide")
             self.MoreLess = 1
         elif self.MoreLess == 1:
             # run hide tool tip
             for widget in self.ShowMoreFrame.winfo_children():
                 widget.destroy()
             self.ShowMoreFrame.pack_forget()
-            self.SeeMoreLabel.configure(text="See History")
+            self.SeeMoreLabel.configure(text="History")
             self.MoreLess = 0
 
     def TearDownHistory(self):
@@ -356,3 +361,24 @@ class CountDownTimer:
             self.Update()
         else:
             "The Clocks broken!"  # Not needed but nice to have
+
+
+class OpenExcelFile:
+    def __init__(self, frame, ExcelPath, EntryLog):
+        """
+        Simple button which opens the current working excel file.
+        :param frame: Writting Frame
+        :param ExcelPath: CWD for excel path + name of file
+        :param EntryLog: Entry widget
+        """
+        self.frame = frame
+        self.ExcelPath = ExcelPath
+        self.EntryLog = EntryLog
+        self.LoadExcelButton = ttk.Button(self.frame,
+                                          text="Open Excel",
+                                          command=lambda: self.OpenExcel())
+        self.LoadExcelButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+
+    def OpenExcel(self):
+        os.startfile(self.ExcelPath)
+        self.EntryLog.focus()  # Return focus to entry after losing it to button
