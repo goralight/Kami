@@ -109,6 +109,7 @@ class SeeThroughSlider:
         set above
         :return: self.root.wm_attributes('-alpha', ScaleEntryValue)
         """
+        global ScaleEntryValue
         ScaleEntryValue = round(self.SliderEntry.get(), 2)
         self.root.wm_attributes('-alpha', ScaleEntryValue)
 
@@ -382,3 +383,38 @@ class OpenExcelFile:
     def OpenExcel(self):
         os.startfile(self.ExcelPath)
         self.EntryLog.focus()  # Return focus to entry after losing it to button
+
+
+class ToggleLoseFocus:
+    def __init__(self, frame, root, EntryLog, HideOption):
+        self.frame = frame
+        self.root = root
+        self.EntryLog = EntryLog
+        self.HideOption = HideOption
+        self.InvisibleCheckBox = ttk.Checkbutton(self.frame,
+                                                 text="Hide",
+                                                 state="normal",
+                                                 command=self.CheckFocus)
+        if self.HideOption == 1:
+            self.InvisibleCheckBox.state(["selected", "!alternate"])
+        else:
+            self.InvisibleCheckBox.state(["!alternate"])
+        self.InvisibleCheckBox.grid(column=0, row=2, sticky=W, padx=105)
+        self.CheckFocus()  # So that it allows the first click to register
+
+    def CheckFocus(self):
+        self.EntryLog.focus()
+        if "selected" in self.InvisibleCheckBox.state():
+            self.root.bind("<FocusOut>", self.LostFocus)
+            self.root.bind("<FocusIn>", self.GainFocus)
+        else:
+            self.root.unbind("<FocusOut>")  # To make sure its always on.
+            # self.root.unbind("<FocusIn>")
+
+    def LostFocus(self, event):
+        if event.widget == self.root:
+            self.root.wm_attributes('-alpha', 0.5)
+
+    def GainFocus(self, event):
+        if event.widget == self.root:
+            self.root.wm_attributes('-alpha', ScaleEntryValue)  # Grabs the value of the scale.

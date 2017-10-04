@@ -1,5 +1,11 @@
 from Files import functions
-from Files import MainMenu
+
+try:
+    from Files import MainMenu
+except ImportError:
+    NeededModules = ["openpyxl", "html"]
+    functions.InstallModule(NeededModules)
+    from Files import MainMenu
 
 # Settings for the root window (lock the resize, default size etc...
 MainMenu.root.resizable(0, 0)  # Disable resizing

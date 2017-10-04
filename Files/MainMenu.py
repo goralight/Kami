@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.3"
+KamiVersion = "0.6.4"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -426,6 +426,7 @@ class OptionsContent:
             SeeThroughSlider(WritingFrame, root)
 
             OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
+            ToggleLoseFocus(WritingFrame, root, EntryItemClassVar.LogEntry, HideFocusOption)
 
             root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath, BugNumber=str(ConfigList[5])+"-"+str(ConfigList[6])))
 
@@ -507,7 +508,7 @@ class OptionsContent:
         # This is how checkboxes should be done. Without intVar \/
         HTMLOption = ttk.Checkbutton(bottomframe,
                                      text="Generate HTML",
-                                     state="normal",)
+                                     state="normal")
 
         if SaveHTMLOption == 1:  # if config = 1, make it remove box and make ticked
             HTMLOption.state(["!alternate", "selected"])

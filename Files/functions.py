@@ -38,6 +38,7 @@ def ConfigureOptions():
     # 10 = charter type
     # 11 = show history number
     # 12 = save to html option
+    # 13 = enable hide
 
 # [0] # Enable timer tick box
 EnableTimerTickBox = ConfigureOptions()[0]
@@ -99,6 +100,11 @@ SaveHTMLOption = ConfigureOptions()[12]
 SaveHTMLOption = SaveHTMLOption[14:]
 SaveHTMLOption = int(SaveHTMLOption)
 
+# [13] # enable hide checkbox
+HideFocusOption = ConfigureOptions()[13]
+HideFocusOption = HideFocusOption[13:]
+HideFocusOption = int(HideFocusOption)
+
 
 def SaveSetUpChanges(TimerOptionParam, TimerParam,
                      SVNOptionParam, SVNPathParam,
@@ -108,7 +114,14 @@ def SaveSetUpChanges(TimerOptionParam, TimerParam,
     Saves what the user inputs as the setup to the config. Saves the user
     entering the data manually everytime the env changes.
 
-    :param SetUpEntryParam:  Set up entry from main menu.
+    :param TimerOptionParam: Timer option from main menu after options have
+                             been punched in
+    :param TimerParam:       Timer int from main menu after punched in
+    :param SVNOptionParam:   Save to svn option after punched in
+    :param SVNPathParam:     Path for svn after punched in
+    :param LocalPathParam:   Local save path after punched in
+    :param ReporterParam:    reporter name after punched in
+    :param SetUpEntryParam:  env entry from main menu after punched in
     """
     # print SetUpEntryParam.get()
     with open(ResDir+"\config.txt", "r") as config:
@@ -270,7 +283,3 @@ def InstallModule(package):
             print "Installing", item, ". . ."
             pip.main(['install', item])
             print ""
-
-NeededModules = ["openpyxl", "html"]
-
-InstallModule(NeededModules)
