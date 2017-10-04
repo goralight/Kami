@@ -1,4 +1,7 @@
 # Kami Notes - 0.6.4
+
+<sub>Kami Notes is opensource. If you wish to download it and make tweaks / edits to it you are free to do so. If you wish to show the world Kami, then cna you please reference this GitHub page and name me as the orginal author. Thank you.<sub>
+
 QA Note Taker. Designed for QA users who need to make quick notes on the bug testing they are completing. Made with JIRA / External save locations in mind. It is perfect for those needing to write down quick notes along side their testing to refer to later on.
 
 Kami Notes is written in Python. It makes use of **Python 2.7.11**
