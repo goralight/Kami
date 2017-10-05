@@ -226,7 +226,7 @@ def CreateHTML():
     print "make the html!"
 
 
-def Die(MainLoop, ConfigList, ExcelLocal, BugNumber):
+def Die(MainLoop, ConfigList, ExcelLocal, BugNumber, FocusState):
     """
     Simple function to perform other processes before actually killing the
     script. Here could add saving / other close down features before it is
@@ -234,6 +234,7 @@ def Die(MainLoop, ConfigList, ExcelLocal, BugNumber):
     :param MainLoop: The Root frame to kill.
     :param ConfigList: List of settings, used to define what the user asked for
     :param ExcelLocal: Local path save of the excel just been created
+    :param FocusState: state of the focus check box
     """
     # print "It closed and I printed before I died... YAY!"
     if "selected" in ConfigList[2]:
@@ -245,6 +246,21 @@ def Die(MainLoop, ConfigList, ExcelLocal, BugNumber):
 
     if "selected" in ConfigList[10]:
         CreateHTML()
+
+    # Saving Writting options
+    with open(ResDir + "\config.txt", "r") as config:
+        data = config.readlines()
+        config.close()
+
+    # Put all savings below
+    if "selected" in FocusState:  # If hide is selected, save it
+        data[13] = "enable_hide: 1\n"
+    else:
+        data[13] = "enable_hide: 0\n"
+
+    with open(ResDir+"\config.txt", 'w') as config:  # Saving to config
+        config.writelines(data)
+        config.close()
 
     MainLoop.destroy()  # Same as using the W10 kill protocol
 

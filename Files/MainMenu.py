@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.4"
+KamiVersion = "0.6.5"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -407,7 +407,7 @@ class OptionsContent:
                                highlightthickness=1)
             ShowMoreFrame = Frame(root)
 
-            Excel = InitExcel(ConfigList)  # Not sure if need this to be a var
+            Excel = InitExcel(ConfigList)
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
@@ -426,9 +426,12 @@ class OptionsContent:
             SeeThroughSlider(WritingFrame, root)
 
             OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
-            ToggleLoseFocus(WritingFrame, root, EntryItemClassVar.LogEntry, HideFocusOption)
+            ToggleFocusVar = ToggleLoseFocus(WritingFrame, root, EntryItemClassVar.LogEntry, HideFocusOption)
 
-            root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList, Excel.CurrentWorkingExcelPath, BugNumber=str(ConfigList[5])+"-"+str(ConfigList[6])))
+            root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList,
+                                                          Excel.CurrentWorkingExcelPath,
+                                                          str(ConfigList[5])+"-"+str(ConfigList[6]),
+                                                          ToggleFocusVar.InvisibleCheckBox.state()))
 
         # Makes it so you can hit enter instead of clicking confirm
         root.bind("<Return>", ConfirmButtonFunctions)
