@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.5"
+KamiVersion = "0.6.6"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -32,12 +32,15 @@ class MainMenuFrames:
         """
         # Need self if you want to call the attribute later on, see
         # Title = TitleLabel(MainMenu.TitleFrame)
-        self.TitleFrame = ttk.Frame(master)
+        self.TitleFrame = ttk.Frame(master, width=90, height=98)
         self.OptionsLabelFrame = Frame(master)
 
         self.TitleFrame.pack(side=TOP,
                              fill="both",
                              expand=True)
+
+        self.TitleFrame.pack_propagate(False)
+
         self.OptionsLabelFrame.pack(padx=12,
                                     pady=(24, 12))
 
@@ -199,11 +202,6 @@ class OptionsContent:
         # Defines the Entry for the Jira Number.
         JiraNumberEntry = ttk.Entry(bottomframe,
                                     width=6)
-        # Defines the quit button which is at the very bottom left of the
-        # window. Simply kills the root window thus killing everything
-        QuitButton = ttk.Button(bottomframe,
-                                text="Quit",
-                                command=root.quit)
 
         # Draws the timer input label.
         TimerInputLabel.grid(row=0, column=3, sticky=W+E, padx=(0, 47))
@@ -407,16 +405,17 @@ class OptionsContent:
                                highlightthickness=1)
             ShowMoreFrame = Frame(root)
 
-            Excel = InitExcel(ConfigList)
+            Excel = InitExcel(ConfigList, KamiVersion)
             ColorFrame.pack(padx=(5, 5), pady=(5, 5), fill=X)
             WritingFrame.pack(padx=(5, 5), pady=(5, 5))
 
-            SaveSetUpChanges(OptionTimer, TimerEntry, OptionSaveSVN, CreateSVNEntry, CreateLocalPath, ReporterNameEntry, SetupEntry)
+            # Uncomment if you want to save options on Confirmation
+            # SaveSetUpChanges(OptionTimer, TimerEntry, OptionSaveSVN, CreateSVNEntry, CreateLocalPath, ReporterNameEntry, SetupEntry)
 
             CountDownTimerVar = CountDownTimer(OptionTimer, TimerEntry, WritingFrame)
 
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
-
+            # TODO: Figure out why ListStr.get isnt returning the currently selected option.
             SmallHistoryVar = SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
 
             EntryItemClassVar = EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
@@ -439,9 +438,7 @@ class OptionsContent:
         # Defines the confirm button, makes use of the ConfirmButtonFunctions()
         ConfirmButton = ttk.Button(bottomframe,
                                    text="Confirm",
-                                   command=lambda: ConfirmButtonFunctions(),
-                                   state="active",
-                                   default="active")
+                                   command=lambda: ConfirmButtonFunctions())
 
         # Draws the PathToLocalLabel Label
         PathToLocalLabel.grid(row=3, column=0,
@@ -523,8 +520,28 @@ class OptionsContent:
         #                 sticky=E, padx=(0, 6),
         #                 pady=(0, 5))
 
-        # Draws the Quit button
-        QuitButton.grid(row=11, column=0,
+        def RunSavedLabel():
+            SavedLabel = ttk.Label(topframe, text="Settings Saved")
+            SavedLabel.pack()
+            root.after(3000, lambda: SavedLabel.pack_forget())
+            # print "Saved"
+
+        def RunSaved():
+            SaveSetUpChanges(OptionTimer, TimerEntry,
+                             OptionSaveSVN, CreateSVNEntry,
+                             CreateLocalPath, ReporterNameEntry,
+                             SetupEntry)
+
+            RunSavedLabel()
+
+        # Defines the save button which is at the very bottom left of the
+        # window. Simply saves the options set by the user which is currently inputted
+        SaveButton = ttk.Button(bottomframe,
+                                text="Save",
+                                command=lambda: RunSaved())
+
+        # Draws the save button
+        SaveButton.grid(row=11, column=0,
                         sticky=W, padx=(5, 0),
                         pady=(0, 5))
 
@@ -532,6 +549,8 @@ class OptionsContent:
         ConfirmButton.grid(row=11, column=3,
                            sticky=W+E, padx=(0, 5),
                            pady=(0, 5))
+
+        JiraNumberEntry.focus()
 
         # TODO: Need to refactor the shit out of this
         # This is messy af - you need to move the lines around and make it

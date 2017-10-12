@@ -31,7 +31,7 @@ class EntryItemClass:
         self.root = root
         self.WhichType = WhichType
         self.TimerCount = TimerCount
-        self.StartingRow = 9
+        self.StartingRow = 10
         self.EntryListInput = []
         self.ExcelPath = ExcelPath
         self.ConfigList = ConfigList

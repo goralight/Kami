@@ -128,7 +128,7 @@ def SaveSetUpChanges(TimerOptionParam, TimerParam,
         data = config.readlines()
         config.close()
 
-    # change line 7 on the txt with below. Needs to \n.
+    # change line n on the txt with below. Needs to \n.
     if "selected" in TimerOptionParam.state():
         data[0] = "enable_timer_default: 1\n"
     else:
