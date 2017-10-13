@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.6"
+KamiVersion = "0.6.8"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -140,6 +140,7 @@ class OptionsContent:
 
         # Entry for the time specified by the user for the timer length
         TimerEntry = ttk.Entry(bottomframe, width=6)
+        CreateToolTip(TimerEntry, "How long you would like the timer to be. Must be greater than 10")
         TimerEntry.insert(END, DefaultTimerValue)  # Pulled from the config.txt
         OptionInt = IntVar()
         # In order to use this, need to set the
@@ -154,6 +155,8 @@ class OptionsContent:
                                       variable=OptionInt,
                                       command=lambda e=TimerEntry, i=OptionInt:
                                       self.naccheck(e, i, None))
+
+        CreateToolTip(OptionTimer, "Enable or disable the Timer when taking notes")
 
         # This checks the config file, if the default for using the timer is
         # 1 it will set the entry to enabled otherwise itll set it to disabled
@@ -193,6 +196,8 @@ class OptionsContent:
 
         JiraTypeList = ttk.OptionMenu(bottomframe, JiraStr,
                                       JiraList[0], *JiraList)
+
+        CreateToolTip(JiraTypeList, "Which product you are testing against")
 
         CharterStr = StringVar()
 
@@ -235,6 +240,7 @@ class OptionsContent:
                                         command=lambda e=CreateSVNEntry,
                                         i=SVNInt, b=SVNBrowseButton:
                                         self.naccheck(e, i, b))
+        CreateToolTip(OptionSaveSVN, "Enable or disable the choice to make a copy of the notes and save to SVN")
 
         # Checks the config and if set to one, set everything linked to on
         if EnableSaveToSVN == 1:
@@ -423,9 +429,10 @@ class OptionsContent:
                                                ConfigList, SmallHistoryVar)
 
             SeeThroughSlider(WritingFrame, root)
-
-            OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
             ToggleFocusVar = ToggleLoseFocus(WritingFrame, root, EntryItemClassVar.LogEntry, HideFocusOption)
+            OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
+            SaveNew(WritingFrame, root, ConfigList, Excel.CurrentWorkingExcelPath, str(ConfigList[5])+"-"+str(ConfigList[6]), ToggleFocusVar.InvisibleCheckBox.state())
+
 
             root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList,
                                                           Excel.CurrentWorkingExcelPath,
@@ -473,6 +480,8 @@ class OptionsContent:
                              sticky=E, padx=(0, 7),
                              pady=(5, 5))
 
+        CreateToolTip(CharterTypeList, "Which type of test are you performing")
+
         # Defines the reporter name label
         ReporterNameLabel = ttk.Label(bottomframe,
                                       text="Reporters Name")
@@ -504,6 +513,7 @@ class OptionsContent:
         SetupEntry.grid(row=9, column=3,
                         sticky=E, padx=(0, 7),
                         pady=(0, 5))
+        CreateToolTip(SetupEntry, "The testing environment being carried out")
 
         # This is how checkboxes should be done. Without intVar \/
         HTMLOption = ttk.Checkbutton(bottomframe,
@@ -521,9 +531,11 @@ class OptionsContent:
         #                 pady=(0, 5))
 
         def RunSavedLabel():
+            SaveButton.config(state=DISABLED)
             SavedLabel = ttk.Label(topframe, text="Settings Saved")
             SavedLabel.pack()
-            root.after(3000, lambda: SavedLabel.pack_forget())
+            root.after(2000, lambda: SavedLabel.pack_forget())
+            root.after(2000, lambda: SaveButton.config(state=NORMAL))
             # print "Saved"
 
         def RunSaved():
@@ -539,6 +551,7 @@ class OptionsContent:
         SaveButton = ttk.Button(bottomframe,
                                 text="Save",
                                 command=lambda: RunSaved())
+        CreateToolTip(SaveButton, "Save these settings for the next time you use Kami Notes.")
 
         # Draws the save button
         SaveButton.grid(row=11, column=0,

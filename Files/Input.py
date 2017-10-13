@@ -6,6 +6,7 @@ import datetime
 import winsound
 import threading
 from ExcelFunctions import InputExcel
+from functions import Die, CreateToolTip
 
 """
 Name:    Input.py
@@ -99,6 +100,7 @@ class SeeThroughSlider:
 
         # Must be in float as it only works out from 0.0 - 1.0
         self.SliderEntry = ttk.Scale(self.frame, from_=0.5, to=1, command=self.SetSeeThrough)
+        CreateToolTip(self.SliderEntry, "Change the transparency of Kami Notes.")
         self.SliderEntry.set(1)
         self.SliderEntry.grid(column=0, row=2, sticky=W)
 
@@ -128,6 +130,7 @@ class SmallHistory:
         self.HistoryListCap = int(HistoryListCap)
 
         self.SeeMoreLabel = ttk.Label(self.frame, text="History", cursor="hand2", )
+        CreateToolTip(self.SeeMoreLabel, "See the history of your notes")
         if self.HistoryCount != 0:
             self.SeeMoreLabel.grid(column=0, row=2, columnspan=3)
         self.SeeMoreLabel.bind("<Button-1>", self.ShowHistory)
@@ -233,6 +236,7 @@ class TypeOfLog:
 
         self.LoggingTypeLabel = Label(self.frame, text=self.WhichType[self.Index],
                                       font="Verdana", cursor="hand2")
+        CreateToolTip(self.LoggingTypeLabel, "Change the type of note you are taking. Keybinding of up and down arrows.")
         self.LoggingTypeLabel.grid(column=2, row=0, sticky=E)
         self.LoggingTypeLabel.bind("<ButtonRelease-1>", self.UpSelectionLogType)
         self.LoggingTypeLabel.bind("<ButtonRelease-3>", self.DownSelectionLogType)
@@ -299,6 +303,7 @@ class CountDownTimer:
         self.TimerAlarm = datetime.timedelta(seconds=self.TimerAlarm)
         self.TimerCount = datetime.timedelta(seconds=self.TimerCount)
         self.TimerCountLabel = ttk.Label(frame, text=self.TimerCount, font="Verdana", cursor="hand2")
+        CreateToolTip(self.TimerCountLabel, "Remaining time for the session. Click to pause.")
         self.TimerCountLabel.bind("<ButtonRelease-1>", self.ChangeTimerState)
         if "selected" in self.TimerStatus:  # Only draws timer if state is true
             self.TimerCountLabel.grid(column=0, row=0, sticky=W)
@@ -378,11 +383,33 @@ class OpenExcelFile:
         self.LoadExcelButton = ttk.Button(self.frame,
                                           text="Open Excel",
                                           command=lambda: self.OpenExcel())
-        self.LoadExcelButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+        CreateToolTip(self.LoadExcelButton, "Opens the Excel file you are currently working on")
+        self.LoadExcelButton.grid(column=0, row=2, columnspan=3, padx=90, pady=(5, 5), sticky=E)
 
     def OpenExcel(self):
         os.startfile(self.ExcelPath)
         self.EntryLog.focus()  # Return focus to entry after losing it to button
+
+
+class SaveNew:
+    def __init__(self, frame, Mainloop, ConfigList, ExcelLocal, BugNumber, FocusState):
+        self.frame = frame
+        self.Mainloop = Mainloop
+        self.Configlist = ConfigList
+        self.ExcelLocal = ExcelLocal
+        self.BugNumber = BugNumber
+        self.FocusState = FocusState
+        self.SaveNewButton = ttk.Button(self.frame,
+                                        text="Save and New",
+                                        command=self.DieAndOpen)
+        CreateToolTip(self.SaveNewButton, "Saves the current notes taken and restarts Kami for another session")
+        self.SaveNewButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+
+
+    def DieAndOpen(self):
+        Die(self.Mainloop, self.Configlist, self.ExcelLocal, self.BugNumber, self.FocusState)
+        # This makes it start back up under a different process
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
 class ToggleLoseFocus:
@@ -395,6 +422,7 @@ class ToggleLoseFocus:
                                                  text="Hide",
                                                  state="normal",
                                                  command=self.CheckFocus)
+        CreateToolTip(self.InvisibleCheckBox, "Enable or disable changing transparency when Kami loses focus")
         if self.HideOption == 1:
             self.InvisibleCheckBox.state(["selected", "!alternate"])
         else:
