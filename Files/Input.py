@@ -130,7 +130,7 @@ class SmallHistory:
         self.HistoryListCap = int(HistoryListCap)
 
         self.SeeMoreLabel = ttk.Label(self.frame, text="History", cursor="hand2", )
-        CreateToolTip(self.SeeMoreLabel, "See the history of your notes")
+        CreateToolTip(self.SeeMoreLabel, "See or hide the history of your notes")
         if self.HistoryCount != 0:
             self.SeeMoreLabel.grid(column=0, row=2, columnspan=3)
         self.SeeMoreLabel.bind("<Button-1>", self.ShowHistory)
@@ -347,6 +347,9 @@ class CountDownTimer:
         self.frame.after(1000, self.Update)  # Every 1s, configure & redraw
         # print self.TimerCountLabel.cget("text")
 
+    def UnbindClick(self):
+        self.TimerCountLabel.bind("<ButtonRelease-1>", self.ChangeTimerState)
+
     def ChangeTimerState(self, *args):
         """
         This handles the timer appearance if the timer state (pause or ticking)
@@ -358,6 +361,8 @@ class CountDownTimer:
         if self.TimerState == 1:
             self.TimerState = 0
             self.TimerCountLabel.configure(foreground="#8150E2")
+            self.TimerCountLabel.unbind("<ButtonRelease-1>")
+            self.TimerCountLabel.after(1000, self.UnbindClick)  # Stops the increase countdown speed bug
         elif self.TimerState == 0:
             self.TimerState = 1
             if self.TimerCount < self.TimerAlarm:
@@ -404,7 +409,6 @@ class SaveNew:
                                         command=self.DieAndOpen)
         CreateToolTip(self.SaveNewButton, "Saves the current notes taken and restarts Kami for another session")
         self.SaveNewButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
-
 
     def DieAndOpen(self):
         Die(self.Mainloop, self.Configlist, self.ExcelLocal, self.BugNumber, self.FocusState)

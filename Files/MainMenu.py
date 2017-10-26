@@ -12,7 +12,7 @@ Includes saving to SVN, path to SVN location, changing the timer, JIRA number
 JIRA Link, etc...
 """
 
-KamiVersion = "0.6.8"
+KamiVersion = "0.7.0"
 
 # Must build a window to host the buttons and widgets you call
 # root is the default var name for Tkinter main window. Root of all the stuffs
@@ -84,19 +84,19 @@ class OptionsContent:
         :param i: short for int, this is the state of the tick box 1/0
         :param b: short for button, the browse button basically
         """
-        # If it is the SVN entry
-        if "/" in e.get() or "\\" in e.get():
+        root.focus()
+        if b is None:
+            if i.get() == 1:
+                e.configure(state='normal')
+            else:
+                e.configure(state='disabled')
+        else:
             if i.get() == 1:
                 e.configure(state='normal')
                 b.configure(state='normal')
             else:
                 e.configure(state='disabled')
                 b.configure(state='disabled')
-        else:  # Else it is this timer entry
-            if i.get() == 1:
-                e.configure(state='normal')
-            else:
-                e.configure(state='disabled')
 
     def __init__(self, bottomframe, topframe):
         """
@@ -104,25 +104,18 @@ class OptionsContent:
         :param bottomframe: The OptionLabelFrame, the bottom one.
         """
 
-        # Please please change the below two fucntions as its bad...
-        # Although dont think its possible :/
-        def AskSVNDir():
+        def AskDir(variable):
             """
             This makes use of the tkFileDialog.askdirectory() function from
             TK. It populates the screen with a dir browser which will then
             return the path to the dir you selected.
 
-            This is copied twice and shouldnt be... AskLocalDir()
-            :return: Path of the selected dir from the popup window
+            :param variable: The two different browse buttons, var or var2
             """
+            root.focus()
             dirname = tkFileDialog.askdirectory(**self.dir_opt)
             if dirname:
-                var.set(dirname)
-
-        def AskLocalDir():
-            dirname = tkFileDialog.askdirectory(**self.dir_opt)
-            if dirname:
-                var2.set(dirname)
+                variable.set(dirname)
 
         # Was moved from CreateSVNEntry()
         # Stores the path of the browse buttons into these vars. var=SVN
@@ -132,7 +125,7 @@ class OptionsContent:
 
         # Options for browsing for a dir
         # Used by tkFileDialog.askdirectory
-        # Options list: https://tkinter.unpythonic.net/wiki/tkFileDialog
+        # Options list: http://effbot.org/tkinterbook/tkinter-file-dialogs.htm
         self.dir_opt = options = {}
         options["initialdir"] = "C:\\"
         options["mustexist"] = True
@@ -182,7 +175,7 @@ class OptionsContent:
         SVNBrowseButton = ttk.Button(bottomframe,
                                      text="Browse...",
                                      state="normal",
-                                     command=AskSVNDir)
+                                     command=lambda: AskDir(var))
 
         # Defines the label which is to the left of the Jira number entry and
         # drop down menu
@@ -285,8 +278,9 @@ class OptionsContent:
         PathToLocalBrowseButton = ttk.Button(bottomframe,
                                              text="Browse...",
                                              state="normal",
-                                             command=AskLocalDir)
+                                             command=lambda: AskDir(var2))
 
+        # Needs to have *args otherwise binded enter doesnt work
         def ConfirmButtonFunctions(*args):
             """
             This is used to make the confirm button run more than one function
@@ -422,6 +416,7 @@ class OptionsContent:
 
             TypeOfLogVar = TypeOfLog(WritingFrame, root, ColorFrame, Logtype, LogTypeColor)
             # TODO: Figure out why ListStr.get isnt returning the currently selected option.
+
             SmallHistoryVar = SmallHistory(WritingFrame, ShowMoreFrame, HistoryListCap)
 
             EntryItemClassVar = EntryItemClass(WritingFrame, root, TypeOfLogVar.LoggingTypeLabel,
@@ -432,7 +427,6 @@ class OptionsContent:
             ToggleFocusVar = ToggleLoseFocus(WritingFrame, root, EntryItemClassVar.LogEntry, HideFocusOption)
             OpenExcelFile(WritingFrame, Excel.CurrentWorkingExcelPath, EntryItemClassVar.LogEntry)
             SaveNew(WritingFrame, root, ConfigList, Excel.CurrentWorkingExcelPath, str(ConfigList[5])+"-"+str(ConfigList[6]), ToggleFocusVar.InvisibleCheckBox.state())
-
 
             root.protocol("WM_DELETE_WINDOW", lambda: Die(root, ConfigList,
                                                           Excel.CurrentWorkingExcelPath,
@@ -528,10 +522,12 @@ class OptionsContent:
         # TODO: Finish me off \/
         # HTMLOption.grid(row=10, column=3,
         #                 sticky=E, padx=(0, 6),
+        #                 sticky=E, padx=(0, 6),
         #                 pady=(0, 5))
 
         def RunSavedLabel():
             SaveButton.config(state=DISABLED)
+            root.focus()
             SavedLabel = ttk.Label(topframe, text="Settings Saved")
             SavedLabel.pack()
             root.after(2000, lambda: SavedLabel.pack_forget())
