@@ -1,4 +1,4 @@
-# Kami Notes - 0.7.0
+# Kami Notes - 0.7.1
 
 <sub>Kami Notes is opensource. If you wish to download it and make tweaks / edits to it you are free to do so. If you wish to show the world Kami, then can you please reference this GitHub page and name me as the orginal author. Thank you.<sub>
 
