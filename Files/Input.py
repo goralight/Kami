@@ -6,7 +6,11 @@ import datetime
 import winsound
 import threading
 from ExcelFunctions import InputExcel
-from functions import Die, CreateToolTip
+from functions import Die
+from functions import CreateToolTip
+from PIL import Image
+from PIL import ImageTk
+from PIL import ImageGrab
 
 """
 Name:    Input.py
@@ -375,7 +379,7 @@ class CountDownTimer:
 
 
 class OpenExcelFile:
-    def __init__(self, frame, ExcelPath, EntryLog):
+    def __init__(self, frame, root, ExcelPath, EntryLog):
         """
         Simple button which opens the current working excel file.
         :param frame: Writting Frame
@@ -383,17 +387,26 @@ class OpenExcelFile:
         :param EntryLog: Entry widget
         """
         self.frame = frame
+        self.root = root
         self.ExcelPath = ExcelPath
         self.EntryLog = EntryLog
-        self.LoadExcelButton = ttk.Button(self.frame,
-                                          text="Open Excel",
-                                          command=lambda: self.OpenExcel())
+
+        try:  # Incase there is no image.
+            self.LoadExcelButton = ttk.Button(self.frame, command=lambda: self.OpenExcel())
+            image = ImageTk.PhotoImage(file="Res\\Images\\open.png")
+            self.LoadExcelButton.config(image=image)
+            self.LoadExcelButton.image = image
+            self.LoadExcelButton.grid(column=0, row=2, columnspan=3, padx=39, pady=(5, 5), sticky=E)
+        except IOError:
+            self.LoadExcelButton = ttk.Button(self.frame, text="Open Excel", command=lambda: self.OpenExcel())
+            self.LoadExcelButton.grid(column=0, row=2, columnspan=3, padx=90, pady=(5, 5), sticky=E)
+
         CreateToolTip(self.LoadExcelButton, "Opens the Excel file you are currently working on")
-        self.LoadExcelButton.grid(column=0, row=2, columnspan=3, padx=90, pady=(5, 5), sticky=E)
 
     def OpenExcel(self):
         os.startfile(self.ExcelPath)
         self.EntryLog.focus()  # Return focus to entry after losing it to button
+        PrintStatusUpdate(self.frame, self.root, "Excel file opened!")
 
 
 class SaveNew:
@@ -404,11 +417,22 @@ class SaveNew:
         self.ExcelLocal = ExcelLocal
         self.BugNumber = BugNumber
         self.FocusState = FocusState
-        self.SaveNewButton = ttk.Button(self.frame,
-                                        text="Save and New",
-                                        command=self.DieAndOpen)
+
+
+
+        try:  # Incase there is no image.
+            self.SaveNewButton = ttk.Button(self.frame, command=self.DieAndOpen)
+            image = ImageTk.PhotoImage(file="Res\\Images\\save.png")
+            self.SaveNewButton.config(image=image)
+            self.SaveNewButton.image = image
+            self.SaveNewButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+        except IOError:
+            self.SaveNewButton = ttk.Button(self.frame, text="Save and New", command=lambda: self.DieAndOpen())
+            self.SaveNewButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+
+
         CreateToolTip(self.SaveNewButton, "Saves the current notes taken and restarts Kami for another session")
-        self.SaveNewButton.grid(column=0, row=2, columnspan=3, pady=(5, 5), sticky=E)
+
 
     def DieAndOpen(self):
         Die(self.Mainloop, self.Configlist, self.ExcelLocal, self.BugNumber, self.FocusState)
@@ -450,3 +474,88 @@ class ToggleLoseFocus:
     def GainFocus(self, event):
         if event.widget == self.root:
             self.root.wm_attributes('-alpha', ScaleEntryValue)  # Grabs the value of the scale.
+
+
+class PrintStatusUpdate:
+    """
+    Displays the status update when it is called, after 3s it closes the label.
+    For example, good for displaying label and letting the user know that the
+    screenshot has been taken, etc.
+    """
+    def __init__(self, frame, root, InputtedText):
+        """
+        :param frame: The writting frame
+        :param root: The main loop
+        :param InputtedText: Which text you would like to display
+        """
+        self.frame = frame
+        self.root = root
+        self.InputtedText = InputtedText
+
+        self.PrintedText = ttk.Label(frame, text=self.InputtedText, font=("Verdana", 10))
+        self.PrintedText.grid(column=0, row=0, columnspan=3, sticky=N)
+        self.root.after(3000, lambda: self.PrintedText.grid_forget())
+
+
+# TODO: select specific screen region. - Don't even know how you would begin to do this lol
+class TakeScreenShotButton:
+    def __init__(self, frame, root, LocalSavePath, Config, BugNumber, SVNOption, StartingNumber, EntryLog):
+        """
+        Handles the creation of screenshots when the user clicks the screenshot
+        button. It will dump the png to the local path with a timestamp. It will
+        also dump it in the SVN if the option was ticked
+
+        :param frame: Writting frame
+        :param root: Root window
+        :param LocalSavePath: path for the local excel save
+        :param Config: config list, used to grab the SVN path
+        :param BugNumber: Current bug number
+        :param SVNOption: Check box state for save to svn
+        :param StartingNumber: starting number which increments every time a
+        screenshot is taken within the session
+        :param EntryLog: The entry field, used for focus
+        """
+        self.frame = frame
+        self.root = root
+        self.LocalSavePath = LocalSavePath
+        self.Config = Config
+        self.BugNumber = BugNumber
+        self.SVNOption = SVNOption
+        self.StartingNumber = StartingNumber
+        self.EntryLog = EntryLog
+
+        try:  # Incase there is no image.
+            self.ScreenshotButton = ttk.Button(self.frame, command=lambda: self.TakeScreenshot())
+            image = ImageTk.PhotoImage(file="Res\\Images\\cam.png")
+            self.ScreenshotButton.config(image=image)
+            self.ScreenshotButton.image = image
+            self.ScreenshotButton.grid(column=0, row=2, columnspan=3, padx=78, pady=(5, 5), sticky=E)
+        except IOError:
+            self.ScreenshotButton = ttk.Button(self.frame, text="Screenshot", command=lambda: self.TakeScreenshot())
+            self.ScreenshotButton.grid(column=0, row=2, columnspan=3, padx=172, pady=(5, 5), sticky=E)
+
+        CreateToolTip(self.ScreenshotButton, "Take a screenshot of your main monitor, Keyboard shortcut is CTRL+P. Currently only captures main monitor.")
+        self.root.bind("<Control-KeyRelease-p>", self.TakeScreenshot)
+        self.root.bind("<Control-KeyRelease-P>", self.TakeScreenshot)  # Incase caps is on
+
+    # TODO: Maybe handle which monitor to screen cap?
+    def TakeScreenshot(self, *args):
+        PrintStatusUpdate(self.frame, self.root, "Screenshot taken!")
+        self.root.wm_attributes('-alpha', 0.0)
+        TakenImage = ImageGrab.grab()
+        self.root.wm_attributes('-alpha', ScaleEntryValue)
+        self.EntryLog.focus()
+        self.StartingNumber += 1
+        TimeStamp = datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S")
+
+        ImageFileName = "image"+str(self.StartingNumber)+"-"+TimeStamp+".png"
+        TakenImage.save(self.LocalSavePath+ImageFileName)
+
+        if "selected" in self.SVNOption:
+            if not os.path.exists(self.Config[3] + "/" + self.BugNumber):
+                os.makedirs(self.Config[3] + "/" + self.BugNumber)
+                TakenImage.save(self.Config[3] + "/" + self.BugNumber + ImageFileName)
+            else:
+                TakenImage.save(self.Config[3] + "/" + self.BugNumber + ImageFileName)
+        else:
+            return
